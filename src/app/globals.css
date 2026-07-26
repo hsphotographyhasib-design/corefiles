@@ -343,3 +343,52 @@ kbd {
   transform: scale(0.94);
 }
 
+/* ===================== Card Lift on Hover =====================
+   Premium enterprise feel — cards subtly rise with deeper shadow
+   when hovered. Apply `.cf-lift` to any glass card surface. */
+.cf-lift {
+  transition:
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.cf-lift:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in oklab, var(--primary) 25%, var(--border));
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 12px 32px -8px rgba(0,0,0,0.14),
+    0 28px 64px -20px rgba(0,0,0,0.22);
+}
+.dark .cf-lift:hover {
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.3),
+    0 12px 32px -8px rgba(0,0,0,0.5),
+    0 28px 64px -20px rgba(0,0,0,0.65);
+}
+.cf-lift:active {
+  transform: translateY(-1px) scale(0.997);
+}
+
+/* Smaller variant for compact cards */
+.cf-lift-sm {
+  transition:
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cf-lift-sm:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 8px 20px -6px rgba(0,0,0,0.12),
+    0 16px 36px -16px rgba(0,0,0,0.18);
+}
+.dark .cf-lift-sm:hover {
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.3),
+    0 8px 20px -6px rgba(0,0,0,0.45),
+    0 16px 36px -16px rgba(0,0,0,0.55);
+}
+

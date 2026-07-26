@@ -80,7 +80,7 @@ export function ReportsView() {
           { label: 'Avg file size', value: '4.8 MB', delta: '-0.2 MB', icon: HardDrive, color: 'text-violet-500 bg-violet-500/10' },
           { label: 'Storage growth', value: '+12%', delta: 'this month', icon: TrendingUp, color: 'text-amber-500 bg-amber-500/10' },
         ].map((s, i) => (
-          <motion.div key={s.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass shadow-float rounded-2xl p-4">
+          <motion.div key={s.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass cf-lift-sm shadow-float rounded-2xl p-4">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-xs text-muted-foreground">{s.label}</p>

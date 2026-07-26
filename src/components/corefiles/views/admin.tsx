@@ -29,7 +29,7 @@ export function AdminView() {
 
   return (
     <div className="space-y-4">
-      <div className="glass shadow-float rounded-2xl p-4">
+      <div className="glass cf-lift-sm shadow-float rounded-2xl p-4">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <Boxes size={18} className="text-primary" /> Admin Panel
         </h2>
@@ -73,7 +73,7 @@ export function AdminView() {
               { label: 'Backups (30d)', value: 31, icon: Database, color: 'from-sky-500 to-blue-600' },
               { label: 'Security score', value: '94/100', icon: ShieldCheck, color: 'from-emerald-500 to-teal-600' },
             ].map(s => (
-              <motion.div key={s.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass shadow-float rounded-2xl p-4">
+              <motion.div key={s.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass cf-lift-sm shadow-float rounded-2xl p-4">
                 <div className="flex items-center gap-3">
                   <div className={cn('grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white', s.color)}>
                     <s.icon size={18} />

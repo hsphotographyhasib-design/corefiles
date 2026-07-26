@@ -148,7 +148,7 @@ export function RolesView() {
                   onClick={() => editing && togglePerm(perm.key)}
                   disabled={!editing || role.name === 'Super Admin'}
                   className={cn(
-                    'flex items-center gap-3 rounded-xl border p-3 text-left transition-all',
+                    'flex items-center gap-3 rounded-xl border p-3 text-left cf-lift-sm',
                     enabled ? 'border-primary/40 bg-primary/5' : 'border-border bg-card/40',
                     editing && role.name !== 'Super Admin' && 'cursor-pointer hover:border-primary/60',
                   )}

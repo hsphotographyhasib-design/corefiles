@@ -67,7 +67,7 @@ function StatCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="glass shadow-float group relative overflow-hidden rounded-2xl p-5"
+      className="glass cf-lift shadow-float group relative overflow-hidden rounded-2xl p-5"
     >
       <div className="flex items-start justify-between">
         <div>
@@ -160,7 +160,7 @@ export function DashboardView() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="glass shadow-float relative overflow-hidden rounded-2xl p-6"
+        className="glass cf-lift shadow-float relative overflow-hidden rounded-2xl p-6"
       >
         <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-emerald-500/10 to-transparent" />
         <div className="relative flex flex-wrap items-end justify-between gap-4">
@@ -203,7 +203,7 @@ export function DashboardView() {
       {/* Charts row 1 */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Network usage */}
-        <div className="glass shadow-float lg:col-span-2 rounded-2xl p-5">
+        <div className="glass cf-lift shadow-float lg:col-span-2 rounded-2xl p-5">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h3 className="flex items-center gap-2 text-sm font-semibold">
@@ -249,7 +249,7 @@ export function DashboardView() {
         </div>
 
         {/* System resources */}
-        <div className="glass shadow-float rounded-2xl p-5">
+        <div className="glass cf-lift shadow-float rounded-2xl p-5">
           <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
             <Cpu size={15} className="text-primary" /> System Resources
           </h3>
@@ -282,7 +282,7 @@ export function DashboardView() {
       {/* Charts row 2 */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Upload/Download trend */}
-        <div className="glass shadow-float lg:col-span-2 rounded-2xl p-5">
+        <div className="glass cf-lift shadow-float lg:col-span-2 rounded-2xl p-5">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h3 className="flex items-center gap-2 text-sm font-semibold">
@@ -308,7 +308,7 @@ export function DashboardView() {
         </div>
 
         {/* Storage by department */}
-        <div className="glass shadow-float rounded-2xl p-5">
+        <div className="glass cf-lift shadow-float rounded-2xl p-5">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <HardDrive size={15} className="text-primary" /> Storage by Department
           </h3>
@@ -334,7 +334,7 @@ export function DashboardView() {
       {/* Services & Activities */}
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Services */}
-        <div className="glass shadow-float lg:col-span-2 rounded-2xl p-5">
+        <div className="glass cf-lift shadow-float lg:col-span-2 rounded-2xl p-5">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h3 className="flex items-center gap-2 text-sm font-semibold">
@@ -350,7 +350,7 @@ export function DashboardView() {
         </div>
 
         {/* Recent activity */}
-        <div className="glass shadow-float rounded-2xl p-5">
+        <div className="glass cf-lift shadow-float rounded-2xl p-5">
           <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
             <Activity size={15} className="text-primary" /> Latest Activity
           </h3>
@@ -379,28 +379,28 @@ export function DashboardView() {
 
       {/* Quick insights */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="glass flex items-center gap-3 rounded-2xl p-4">
+        <div className="glass cf-lift-sm flex items-center gap-3 rounded-2xl p-4">
           <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/10 text-emerald-500"><ShieldCheck size={18} /></div>
           <div>
             <p className="text-xs text-muted-foreground">Security score</p>
             <p className="text-sm font-bold">94 / 100</p>
           </div>
         </div>
-        <div className="glass flex items-center gap-3 rounded-2xl p-4">
+        <div className="glass cf-lift-sm flex items-center gap-3 rounded-2xl p-4">
           <div className="grid h-10 w-10 place-items-center rounded-xl bg-amber-500/10 text-amber-500"><AlertTriangle size={18} /></div>
           <div>
             <p className="text-xs text-muted-foreground">Pending approvals</p>
             <p className="text-sm font-bold">3 files</p>
           </div>
         </div>
-        <div className="glass flex items-center gap-3 rounded-2xl p-4">
+        <div className="glass cf-lift-sm flex items-center gap-3 rounded-2xl p-4">
           <div className="grid h-10 w-10 place-items-center rounded-xl bg-sky-500/10 text-sky-500"><Database size={18} /></div>
           <div>
             <p className="text-xs text-muted-foreground">DB connections</p>
             <p className="text-sm font-bold">28 / 100</p>
           </div>
         </div>
-        <div className="glass flex items-center gap-3 rounded-2xl p-4">
+        <div className="glass cf-lift-sm flex items-center gap-3 rounded-2xl p-4">
           <div className="grid h-10 w-10 place-items-center rounded-xl bg-violet-500/10 text-violet-500"><Zap size={18} /></div>
           <div>
             <p className="text-xs text-muted-foreground">Redis ops/s</p>

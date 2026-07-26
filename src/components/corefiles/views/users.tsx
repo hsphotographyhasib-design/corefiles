@@ -45,7 +45,7 @@ export function UsersView() {
           { label: '2FA enabled', value: users.filter(u => u.twoFactor).length, icon: Shield, color: 'from-violet-500 to-purple-600' },
           { label: 'Suspended', value: users.filter(u => u.status === 'suspended').length, icon: Ban, color: 'from-rose-500 to-pink-600' },
         ].map(s => (
-          <div key={s.label} className="glass shadow-float rounded-2xl p-4">
+          <div key={s.label} className="glass cf-lift-sm shadow-float rounded-2xl p-4">
             <div className="flex items-center gap-3">
               <div className={cn('grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white', s.color)}>
                 <s.icon size={18} />

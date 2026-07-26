@@ -23,7 +23,7 @@ function RadialGauge({ label, value, max, color, unit, icon: Icon }: {
 }) {
   const pct = Math.round((value / max) * 100)
   return (
-    <div className="glass shadow-float rounded-2xl p-4">
+    <div className="glass cf-lift-sm shadow-float rounded-2xl p-4">
       <div className="mb-3 flex items-center justify-between">
         <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <Icon size={13} /> {label}
@@ -91,7 +91,7 @@ export function MonitoringView() {
       </div>
 
       {/* Live chart */}
-      <div className="glass shadow-float rounded-2xl p-5">
+      <div className="glass cf-lift shadow-float rounded-2xl p-5">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h3 className="flex items-center gap-2 text-sm font-semibold">
@@ -135,7 +135,7 @@ export function MonitoringView() {
       </div>
 
       {/* Network usage chart */}
-      <div className="glass shadow-float rounded-2xl p-5">
+      <div className="glass cf-lift shadow-float rounded-2xl p-5">
         <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
           <Network size={15} className="text-primary" /> Network Throughput (24h)
         </h3>
@@ -164,7 +164,7 @@ export function MonitoringView() {
       </div>
 
       {/* Docker services */}
-      <div className="glass shadow-float rounded-2xl p-5">
+      <div className="glass cf-lift shadow-float rounded-2xl p-5">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="flex items-center gap-2 text-sm font-semibold">
             <Container size={15} className="text-primary" /> Docker Services

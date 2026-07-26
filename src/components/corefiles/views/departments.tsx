@@ -44,7 +44,7 @@ export function DepartmentsView() {
           { label: 'Total storage quota', value: `${(departments.reduce((s, d) => s + d.storageQuotaBytes, 0) / 1024 ** 3).toFixed(0)} GB`, icon: HardDrive, color: 'from-amber-500 to-orange-600' },
           { label: 'Avg utilization', value: `${Math.round(departments.reduce((s, d) => s + d.storageUsedBytes / d.storageQuotaBytes, 0) / departments.length * 100)}%`, icon: HardDrive, color: 'from-violet-500 to-purple-600' },
         ].map(s => (
-          <div key={s.label} className="glass shadow-float rounded-2xl p-4">
+          <div key={s.label} className="glass cf-lift-sm shadow-float rounded-2xl p-4">
             <div className="flex items-center gap-3">
               <div className={cn('grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br text-white', s.color)}>
                 <s.icon size={18} />

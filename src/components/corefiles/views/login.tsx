@@ -85,7 +85,7 @@ export function LoginScreen() {
               { icon: Server, title: 'Self-hosted', desc: 'Ubuntu + Docker + MinIO' },
               { icon: Cloud, title: 'Cloud-ready', desc: 'Scales to millions of files' },
             ].map(card => (
-              <div key={card.title} className="glass rounded-xl p-4">
+              <div key={card.title} className="glass cf-lift-sm rounded-xl p-4">
                 <card.icon size={20} className="mb-2 text-primary" />
                 <p className="text-sm font-semibold">{card.title}</p>
                 <p className="text-xs text-muted-foreground">{card.desc}</p>

@@ -104,7 +104,7 @@ function FileCard({ file, onOpen, selected, onToggleSelect }: {
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'group relative cursor-pointer rounded-xl border bg-card/60 p-3 transition-all hover:shadow-float',
+        'group relative cursor-pointer rounded-xl border bg-card/60 p-3 cf-lift-sm hover:border-primary/40',
         selected ? 'border-primary ring-2 ring-primary/20' : 'border-border/60 hover:border-primary/40'
       )}
       onClick={onOpen}
@@ -509,7 +509,7 @@ export function FileManagerView() {
                 <button
                   key={f.id}
                   onClick={() => { setCurrentFolder(f.id); setSelectedIds(new Set()) }}
-                  className="group flex items-center gap-2 rounded-xl border border-border/60 bg-card/40 p-3 text-left transition-all hover:border-primary/40 hover:shadow-float"
+                  className="group flex items-center gap-2 rounded-xl border border-border/60 bg-card/40 p-3 text-left cf-lift-sm hover:border-primary/40"
                 >
                   <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg" style={{ background: `${f.color}20`, color: f.color }}>
                     <Folder size={16} />

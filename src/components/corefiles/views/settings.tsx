@@ -28,7 +28,7 @@ export function SettingsView() {
 
   return (
     <div className="space-y-4">
-      <div className="glass shadow-float rounded-2xl p-4">
+      <div className="glass cf-lift-sm shadow-float rounded-2xl p-4">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <SettingsIcon size={18} className="text-primary" /> Settings
         </h2>
@@ -58,7 +58,7 @@ export function SettingsView() {
           key={tab}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass shadow-float rounded-2xl p-6"
+          className="glass cf-lift shadow-float rounded-2xl p-6"
         >
           {tab === 'profile' && (
             <div className="space-y-5">
