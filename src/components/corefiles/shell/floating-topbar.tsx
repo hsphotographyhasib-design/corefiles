@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, Bell, Upload, Sun, Moon, ChevronDown, Check, LogOut,
   User as UserIcon, Settings as SettingsIcon, Shield, UserCog,
-  CheckCheck, Globe, Building2, Command, PanelLeftClose, PanelLeftOpen,
-  Menu as MenuIcon, Boxes,
+  CheckCheck, Globe, Command, Boxes,
 } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
 import { Avatar } from '@/components/corefiles/common/avatar'
@@ -33,7 +32,7 @@ export function FloatingHeader() {
   const {
     user, workspaces, currentWorkspaceId, setWorkspace,
     setQuickFind, setUploadOpen, notifications, markAllRead, markNotificationRead,
-    setView, navState, toggleNav, setDrawerOpen,
+    setView,
   } = useApp()
   const { theme, setTheme } = useTheme()
   const [notifOpen, setNotifOpen] = React.useState(false)
@@ -49,7 +48,7 @@ export function FloatingHeader() {
   const unread = notifications.filter(n => !n.read).length
   const currentWs = workspaces.find(w => w.id === currentWorkspaceId)!
 
-  // ⌘K + ⌘U + ⌘\ keyboard shortcuts
+  // ⌘K + ⌘U keyboard shortcuts
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -60,14 +59,10 @@ export function FloatingHeader() {
         e.preventDefault()
         setUploadOpen(true)
       }
-      if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
-        e.preventDefault()
-        toggleNav()
-      }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [setQuickFind, setUploadOpen, toggleNav])
+  }, [setQuickFind, setUploadOpen])
 
   // Close popovers on outside click
   React.useEffect(() => {
@@ -87,37 +82,13 @@ export function FloatingHeader() {
       initial={{ opacity: 0, y: -16, filter: 'blur(8px)' }}
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ type: 'spring', stiffness: 220, damping: 28 }}
-      // Spec: Top 20px, Left 20px, Right 20px, Height 72px, Radius 24px
+      // Spec: top:20, left:20, right:20, height:72, radius:24 (rounded-3xl)
       className="glass-nav fixed left-5 right-5 top-5 z-50 h-[72px] rounded-3xl"
       role="banner"
     >
       <div className="flex h-full items-center gap-2 px-3 sm:px-4">
         {/* LEFT — Logo + Workspace */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Nav toggle (desktop) / Drawer trigger (tablet/mobile) */}
-          <button
-            onClick={() => {
-              // On tablet/mobile, open drawer; on desktop, toggle nav
-              if (window.matchMedia('(max-width: 1023px)').matches) setDrawerOpen(true)
-              else toggleNav()
-            }}
-            className="cf-focus-ring grid h-10 w-10 place-items-center rounded-2xl text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            aria-label={navState === 'expanded' ? 'Collapse navigation' : 'Expand navigation'}
-            title="Toggle navigation (⌘\\)"
-          >
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.span
-                key={navState}
-                initial={{ opacity: 0, rotate: -90 }}
-                animate={{ opacity: 1, rotate: 0 }}
-                exit={{ opacity: 0, rotate: 90 }}
-                transition={{ duration: 0.15 }}
-              >
-                {navState === 'expanded' ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
-              </motion.span>
-            </AnimatePresence>
-          </button>
-
           {/* Logo */}
           <button
             onClick={() => useApp.getState().setView('dashboard')}
@@ -132,7 +103,7 @@ export function FloatingHeader() {
             </div>
           </button>
 
-          {/* Workspace selector (desktop only) */}
+          {/* Workspace selector */}
           <div ref={workspaceRef} className="relative hidden md:block">
             <button
               onClick={() => setWorkspaceOpen(o => !o)}
@@ -227,7 +198,7 @@ export function FloatingHeader() {
             </AnimatePresence>
           </button>
 
-          {/* Language (desktop) */}
+          {/* Language */}
           <div ref={langRef} className="relative hidden lg:block">
             <button
               onClick={() => setLangOpen(o => !o)}
@@ -391,3 +362,6 @@ export function FloatingHeader() {
     </motion.header>
   )
 }
+
+// Need Building2 import — kept at bottom for clarity
+import { Building2 } from 'lucide-react'

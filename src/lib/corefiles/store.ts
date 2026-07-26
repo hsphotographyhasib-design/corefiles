@@ -23,39 +23,11 @@ export type ViewKey =
   | 'monitoring'
   | 'settings'
 
-/** Three-state floating navigation */
-export type NavState = 'expanded' | 'collapsed' | 'hidden'
-
 export interface Workspace {
   id: string
   name: string
   color: string
   initials: string
-}
-
-const NAV_STATE_KEY = 'corefiles:nav-state'
-const NAV_OVERRIDE_KEY = 'corefiles:nav-override'
-
-/** Read persisted nav state on client (SSR-safe — defaults to expanded). */
-function readNavState(): NavState {
-  if (typeof window === 'undefined') return 'expanded'
-  try {
-    const v = localStorage.getItem(NAV_STATE_KEY)
-    return v === 'collapsed' || v === 'hidden' || v === 'expanded' ? v : 'expanded'
-  } catch { return 'expanded' }
-}
-
-function readNavOverride(): boolean {
-  if (typeof window === 'undefined') return false
-  try { return localStorage.getItem(NAV_OVERRIDE_KEY) === 'true' } catch { return false }
-}
-
-function persistNavState(state: NavState, override: boolean) {
-  if (typeof window === 'undefined') return
-  try {
-    localStorage.setItem(NAV_STATE_KEY, state)
-    localStorage.setItem(NAV_OVERRIDE_KEY, String(override))
-  } catch { /* ignore */ }
 }
 
 interface AppState {
@@ -66,34 +38,20 @@ interface AppState {
   logout: () => void
   setRole: (role: RoleKey) => void
 
-  // Workspace selector (multi-org support)
+  // Workspace selector
   workspaces: Workspace[]
   currentWorkspaceId: string
   setWorkspace: (id: string) => void
 
-  // Navigation
+  // Navigation (horizontal dock)
   view: ViewKey
   setView: (v: ViewKey) => void
 
-  // Floating nav state — 'auto' lets user override the smart auto-hide
-  navState: NavState
-  navUserOverride: boolean
-  setNavState: (s: NavState) => void
-  toggleNav: () => void
-  cycleNav: () => void
-  collapseNav: () => void
-  expandNav: () => void
-  hideNav: () => void
-
-  // Tablet drawer
-  drawerOpen: boolean
-  setDrawerOpen: (open: boolean) => void
-
-  // Breadcrumbs (clickable)
+  // Breadcrumbs
   breadcrumbs: { label: string; view?: ViewKey; folderId?: string }[]
   setBreadcrumbs: (b: { label: string; view?: ViewKey; folderId?: string }[]) => void
 
-  // Quick find (⌘K command palette)
+  // Quick find (⌘K)
   quickFindOpen: boolean
   setQuickFind: (open: boolean) => void
 
@@ -107,11 +65,11 @@ interface AppState {
   markAllRead: () => void
   unreadCount: () => number
 
-  // Selected file (for preview panel)
+  // Selected file
   selectedFileId: string | null
   setSelectedFile: (id: string | null) => void
 
-  // Folder navigation (for File Manager)
+  // Folder navigation
   currentFolderId: string
   setCurrentFolder: (id: string) => void
 
@@ -133,8 +91,6 @@ export const useApp = create<AppState>((set, get) => ({
       isAuthed: true,
       user: { id: 'u-1', name: 'Hasan Rahman', email: 'hasan@hasanurjaya.com', role },
       view: 'dashboard',
-      navState: readNavState(),
-      navUserOverride: readNavOverride(),
       breadcrumbs: [{ label: 'Dashboard', view: 'dashboard' }],
     }),
   logout: () => set({ isAuthed: false, user: null, view: 'dashboard' }),
@@ -146,39 +102,6 @@ export const useApp = create<AppState>((set, get) => ({
 
   view: 'dashboard',
   setView: (v) => set({ view: v }),
-
-  navState: readNavState(),
-  navUserOverride: readNavOverride(),
-  setNavState: (s) => {
-    persistNavState(s, true)
-    set({ navState: s, navUserOverride: true })
-  },
-  toggleNav: () => {
-    const next: NavState = get().navState === 'expanded' ? 'collapsed' : 'expanded'
-    persistNavState(next, true)
-    set({ navState: next, navUserOverride: true })
-  },
-  cycleNav: () => {
-    const cur = get().navState
-    const next: NavState = cur === 'expanded' ? 'collapsed' : cur === 'collapsed' ? 'hidden' : 'expanded'
-    persistNavState(next, true)
-    set({ navState: next, navUserOverride: true })
-  },
-  collapseNav: () => {
-    persistNavState('collapsed', get().navUserOverride)
-    set({ navState: 'collapsed' })
-  },
-  expandNav: () => {
-    // Smart expand (hover, focus) — does NOT mark as user override
-    set({ navState: 'expanded' })
-  },
-  hideNav: () => {
-    persistNavState('hidden', true)
-    set({ navState: 'hidden', navUserOverride: true })
-  },
-
-  drawerOpen: false,
-  setDrawerOpen: (open) => set({ drawerOpen: open }),
 
   breadcrumbs: [{ label: 'Dashboard', view: 'dashboard' }],
   setBreadcrumbs: (b) => set({ breadcrumbs: b }),

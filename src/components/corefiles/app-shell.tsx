@@ -3,10 +3,8 @@
 import * as React from 'react'
 import { useApp } from '@/lib/corefiles/store'
 import { FloatingHeader } from '@/components/corefiles/shell/floating-topbar'
-import { FloatingLeftNav } from '@/components/corefiles/shell/floating-left-nav'
+import { FloatingDockNav } from '@/components/corefiles/shell/floating-dock-nav'
 import { FloatingContent } from '@/components/corefiles/shell/floating-content'
-import { TabletNavDrawer } from '@/components/corefiles/shell/tablet-nav-drawer'
-import { MobileBottomNav } from '@/components/corefiles/shell/mobile-bottom-nav'
 import { QuickFind } from '@/components/corefiles/shell/quick-find'
 import { UploadModal } from '@/components/corefiles/shell/upload-modal'
 import { ToastBridge } from '@/components/corefiles/common/toast-bridge'
@@ -49,26 +47,25 @@ function ViewRenderer({ view }: { view: string }) {
 }
 
 /**
- * AppShell — the CoreFiles floating layout.
+ * AppShell — the CoreFiles horizontal-dock layout.
  *
- * Two independent floating layers (header + nav) with a 16px visible gap between
- * them, plus a third floating layer (content) that also floats as its own card.
- * Everything is `position: fixed` with the spec-defined offsets so the page
- * background remains visible behind the glass surfaces — Arc Browser / VisionOS feel.
+ * NO LEFT SIDEBAR. NO VERTICAL NAVIGATION.
  *
- *   ┌──────────────────────────────────────────────────────────┐
- *   │  (transparent page background — decorative gradients)   │
- *   │  ╭──────────────────────────────────────────────────╮    │
- *   │  │ HEADER  top: 20px, left/right: 20px, h: 72px    │    │
- *   │  ╰──────────────────────────────────────────────────╯    │
- *   │  ←16px gap→                                              │
- *   │  ╭──────────╮  ╭────────────────────────────────────╮    │
- *   │  │   NAV    │  │  CONTENT (floats as its own card)  │    │
- *   │  │ top:108  │  │  top: 108px, padding: 32px         │    │
- *   │  │ w: 280   │  │  left: 320px (when nav expanded)   │    │
- *   │  │          │  │                                    │    │
- *   │  ╰──────────╯  ╰────────────────────────────────────╯    │
- *   └──────────────────────────────────────────────────────────┘
+ * Three independent floating layers stacked vertically:
+ *
+ *   ┌─ Header (top: 20, h: 72, L/R: 20) ─────────────────────────┐
+ *   │  Logo  Workspace   Search   Upload 🔔 🌙 👤              │
+ *   ├────────────────────────── 16px gap ────────────────────────┤
+ *   ├─ Dock (top: 108, h: 64, max-w: 1400, rounded-full) ────────┤
+ *   │  🏠 Dashboard │ 📁 Files │ 👥 Users │ 📊 Reports │ ⚙ Settings │
+ *   ├────────────────────────── 20px gap ────────────────────────┤
+ *   ┌─ Content (top: 192, L/R/Bottom: 20) ───────────────────────┐
+ *   │  Breadcrumbs                                                 │
+ *   │  [active view content]                                       │
+ *   └──────────────────────────────────────────────────────────────┘
+ *
+ * The dock is horizontally scrollable, drag-able, snap-scrolling, with
+ * arrow buttons and keyboard ← → navigation.
  */
 export function AppShell() {
   const { isAuthed, view } = useApp()
@@ -77,22 +74,16 @@ export function AppShell() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Layer 1 — Floating header (always visible, all breakpoints) */}
+      {/* Layer 1 — Floating Header (always visible) */}
       <FloatingHeader />
 
-      {/* Layer 2 — Floating left nav (desktop only; tablet/mobile uses drawer) */}
-      <FloatingLeftNav />
+      {/* Layer 2 — Floating Horizontal Dock Nav (NO LEFT SIDEBAR) */}
+      <FloatingDockNav />
 
-      {/* Layer 2 alt — Overlay drawer for tablet/mobile when triggered */}
-      <TabletNavDrawer />
-
-      {/* Layer 3 — Floating content card (the main scroll container) */}
+      {/* Layer 3 — Floating Content Card (full width below dock) */}
       <FloatingContent>
         <ViewRenderer view={view} />
       </FloatingContent>
-
-      {/* Mobile bottom nav with FAB (replaces left nav on mobile) */}
-      <MobileBottomNav />
 
       {/* Global overlays */}
       <QuickFind />
