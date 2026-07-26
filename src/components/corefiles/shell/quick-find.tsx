@@ -3,8 +3,9 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Search, FolderTree, Users, Settings, Shield, BarChart3, Server,
+  Search, FolderTree, FolderOpen, Users, Settings, Shield, BarChart3, Server,
   FileText, Building2, Bell, Star, Clock, Trash2, Boxes, CornerDownLeft,
+  Share2, Download, LifeBuoy,
 } from 'lucide-react'
 import { useApp, type ViewKey } from '@/lib/corefiles/store'
 import { files, users, folders } from '@/components/corefiles/data/mock'
@@ -38,15 +39,21 @@ export function QuickFind() {
     const navResults: Result[] = [
       { id: 'n-dash', type: 'view', label: 'Dashboard', sub: 'Overview & system health', icon: Boxes, action: () => setView('dashboard') },
       { id: 'n-files', type: 'view', label: 'File Manager', sub: 'Browse all files', icon: FolderTree, action: () => setView('files') },
+      { id: 'n-folders', type: 'view', label: 'Folders', sub: 'Folder tree explorer', icon: FolderOpen, action: () => setView('folders') },
       { id: 'n-fav', type: 'view', label: 'Favorites', sub: 'Starred files', icon: Star, action: () => setView('favorites') },
       { id: 'n-rec', type: 'view', label: 'Recent Files', sub: 'Recently modified', icon: Clock, action: () => setView('recent') },
+      { id: 'n-shared', type: 'view', label: 'Shared with me', sub: 'Files others shared with you', icon: Share2, action: () => setView('shared') },
+      { id: 'n-downloads', type: 'view', label: 'Downloads', sub: 'Download history', icon: Download, action: () => setView('downloads') },
       { id: 'n-users', type: 'view', label: 'Users', sub: 'Manage user accounts', icon: Users, action: () => setView('users') },
       { id: 'n-roles', type: 'view', label: 'Roles & Permissions', sub: 'Configure access control', icon: Shield, action: () => setView('roles') },
       { id: 'n-dept', type: 'view', label: 'Departments', sub: 'Organization structure', icon: Building2, action: () => setView('departments') },
       { id: 'n-audit', type: 'view', label: 'Audit Logs', sub: 'Immutable action trail', icon: FileText, action: () => setView('audit-logs') },
+      { id: 'n-login-logs', type: 'view', label: 'Login Logs', sub: 'Authentication history', icon: FileText, action: () => setView('login-logs') },
+      { id: 'n-activity', type: 'view', label: 'File Activity Logs', sub: 'Every file operation', icon: FileText, action: () => setView('activity-logs') },
       { id: 'n-mon', type: 'view', label: 'Server Monitoring', sub: 'Live system metrics', icon: Server, action: () => setView('monitoring') },
       { id: 'n-rep', type: 'view', label: 'Reports', sub: 'Analytics & exports', icon: BarChart3, action: () => setView('reports') },
       { id: 'n-set', type: 'view', label: 'Settings', sub: 'System preferences', icon: Settings, action: () => setView('settings') },
+      { id: 'n-sup', type: 'view', label: 'Support', sub: 'Help center & contact', icon: LifeBuoy, action: () => setView('support') },
       { id: 'n-trash', type: 'view', label: 'Recycle Bin', sub: 'Deleted files', icon: Trash2, action: () => setView('trash') },
       { id: 'n-notif', type: 'view', label: 'Notifications', sub: 'Alerts center', icon: Bell, action: () => setView('notifications') },
     ]

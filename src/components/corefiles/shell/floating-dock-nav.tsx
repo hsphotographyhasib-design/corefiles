@@ -6,6 +6,7 @@ import {
   ChevronLeft, ChevronRight, Plus, Menu as MenuIcon,
 } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
+import { useUploadEngine } from '@/lib/corefiles/upload-engine'
 import { getDockMenuForRole, type MenuItem, type RoleKey } from '@/components/corefiles/data/menu'
 import { cn } from '@/lib/utils'
 
@@ -203,9 +204,7 @@ export function FloatingDockNav() {
         }}
       >
         {items.map(item => {
-          const active = view === item.url &&
-            item.id !== 'm-folders' && item.id !== 'm-shared' &&
-            item.id !== 'm-downloads'
+          const active = view === item.url
           const Icon = item.icon
           const badge = item.badge_key === 'notifications' ? unread : undefined
           return (
@@ -297,7 +296,7 @@ export function FloatingDockNav() {
 
       {/* Quick upload FAB-style button */}
       <button
-        onClick={() => useApp.getState().setUploadOpen(true)}
+        onClick={() => useUploadEngine.getState().setModalOpen(true)}
         className="cf-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-glow transition-transform hover:scale-105 active:scale-95"
         aria-label="Quick upload"
         title="Quick upload (⌘U)"

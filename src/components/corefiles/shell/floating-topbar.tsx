@@ -8,6 +8,7 @@ import {
   CheckCheck, Globe, Command, Boxes,
 } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
+import { useUploadEngine } from '@/lib/corefiles/upload-engine'
 import { Avatar } from '@/components/corefiles/common/avatar'
 import { useTheme } from 'next-themes'
 import { toast } from '@/components/corefiles/common/toast-bridge'
@@ -31,9 +32,10 @@ const languages = [
 export function FloatingHeader() {
   const {
     user, workspaces, currentWorkspaceId, setWorkspace,
-    setQuickFind, setUploadOpen, notifications, markAllRead, markNotificationRead,
+    setQuickFind, notifications, markAllRead, markNotificationRead,
     setView,
   } = useApp()
+  const setModalOpen = useUploadEngine(s => s.setModalOpen)
   const { theme, setTheme } = useTheme()
   const [notifOpen, setNotifOpen] = React.useState(false)
   const [profileOpen, setProfileOpen] = React.useState(false)
@@ -57,12 +59,12 @@ export function FloatingHeader() {
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'u') {
         e.preventDefault()
-        setUploadOpen(true)
+        setModalOpen(true)
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [setQuickFind, setUploadOpen])
+  }, [setQuickFind, setModalOpen])
 
   // Close popovers on outside click
   React.useEffect(() => {
@@ -171,7 +173,7 @@ export function FloatingHeader() {
         <div className="flex items-center gap-1.5">
           {/* Quick upload */}
           <button
-            onClick={() => setUploadOpen(true)}
+            onClick={() => setModalOpen(true)}
             className="cf-focus-ring flex h-10 items-center gap-1.5 rounded-2xl bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:shadow-glow active:scale-[0.97] sm:px-4"
             title="Quick upload (⌘U)"
           >

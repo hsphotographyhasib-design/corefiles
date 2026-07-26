@@ -7,11 +7,16 @@ import { FloatingDockNav } from '@/components/corefiles/shell/floating-dock-nav'
 import { FloatingContent } from '@/components/corefiles/shell/floating-content'
 import { QuickFind } from '@/components/corefiles/shell/quick-find'
 import { UploadModal } from '@/components/corefiles/shell/upload-modal'
+import { UploadManager } from '@/components/corefiles/shell/upload-manager'
 import { ToastBridge } from '@/components/corefiles/common/toast-bridge'
+import { ErrorBoundary } from '@/components/corefiles/common/error-boundary'
 import { RoleSwitcher } from '@/components/corefiles/shell/role-switcher'
 import { LoginScreen } from '@/components/corefiles/views/login'
 import { DashboardView } from '@/components/corefiles/views/dashboard'
 import { FileManagerView } from '@/components/corefiles/views/files'
+import { FoldersView } from '@/components/corefiles/views/folders'
+import { SharedView } from '@/components/corefiles/views/shared'
+import { DownloadsView } from '@/components/corefiles/views/downloads'
 import { UsersView } from '@/components/corefiles/views/users'
 import { RolesView } from '@/components/corefiles/views/roles'
 import { DepartmentsView } from '@/components/corefiles/views/departments'
@@ -21,29 +26,74 @@ import { ReportsView } from '@/components/corefiles/views/reports'
 import { AdminView } from '@/components/corefiles/views/admin'
 import { MonitoringView } from '@/components/corefiles/views/monitoring'
 import { SettingsView } from '@/components/corefiles/views/settings'
+import { SupportView } from '@/components/corefiles/views/support'
 import { FavoritesView, RecentView, TrashView, SearchView } from '@/components/corefiles/views/collections'
+import { NotFoundView } from '@/components/corefiles/views/not-found'
+import {
+  menuItems, rolePermissions, type RoleKey, type Permission,
+} from '@/components/corefiles/data/menu'
+import type { ViewKey } from '@/lib/corefiles/store'
 
-function ViewRenderer({ view }: { view: string }) {
-  switch (view) {
-    case 'dashboard': return <DashboardView />
-    case 'files': return <FileManagerView />
-    case 'favorites': return <FavoritesView />
-    case 'recent': return <RecentView />
-    case 'search': return <SearchView />
-    case 'trash': return <TrashView />
-    case 'users': return <UsersView />
-    case 'roles': return <RolesView />
-    case 'departments': return <DepartmentsView />
-    case 'audit-logs': return <AuditLogsView />
-    case 'login-logs': return <LoginLogsView />
-    case 'activity-logs': return <ActivityLogsView />
-    case 'notifications': return <NotificationsView />
-    case 'reports': return <ReportsView />
-    case 'admin': return <AdminView />
-    case 'monitoring': return <MonitoringView />
-    case 'settings': return <SettingsView />
-    default: return <DashboardView />
+/** All views in the system — keyed by ViewKey. */
+const views: Record<string, React.ComponentType> = {
+  'dashboard': DashboardView,
+  'files': FileManagerView,
+  'folders': FoldersView,
+  'favorites': FavoritesView,
+  'recent': RecentView,
+  'shared': SharedView,
+  'downloads': DownloadsView,
+  'trash': TrashView,
+  'search': SearchView,
+  'users': UsersView,
+  'roles': RolesView,
+  'departments': DepartmentsView,
+  'notifications': NotificationsView,
+  'audit-logs': AuditLogsView,
+  'login-logs': LoginLogsView,
+  'activity-logs': ActivityLogsView,
+  'reports': ReportsView,
+  'admin': AdminView,
+  'monitoring': MonitoringView,
+  'settings': SettingsView,
+  'support': SupportView,
+}
+
+/**
+ * Checks if a given role has permission to access a given view.
+ * Returns 'ok' | 'not-found' | 'denied'.
+ */
+function checkPermission(view: ViewKey, role: RoleKey): 'ok' | 'not-found' | 'denied' {
+  // Find the menu item that owns this view
+  const item = menuItems.find(m => m.url === view)
+  if (!item) {
+    // Some views (audit-logs, login-logs, search, admin, not-found) are reachable
+    // via Quick Find or breadcrumbs but not in the menu config. Allow them.
+    if (['audit-logs', 'login-logs', 'search', 'admin', 'not-found'].includes(view)) return 'ok'
+    return 'not-found'
   }
+  if (!item.permission_required) return 'ok'
+  const perms = rolePermissions[role] || []
+  return perms.includes(item.permission_required) ? 'ok' : 'denied'
+}
+
+function ViewRenderer({ view }: { view: ViewKey }) {
+  const { user } = useApp()
+  const role = (user?.role || 'Guest') as RoleKey
+
+  // Permission check — frontend enforcement
+  const status = checkPermission(view, role)
+  if (status === 'not-found') return <NotFoundView variant="not-found" />
+  if (status === 'denied') return <NotFoundView variant="permission-denied" />
+
+  const ViewComponent = views[view]
+  if (!ViewComponent) return <NotFoundView variant="not-found" />
+
+  return (
+    <ErrorBoundary view={view}>
+      <ViewComponent />
+    </ErrorBoundary>
+  )
 }
 
 /**
@@ -52,20 +102,13 @@ function ViewRenderer({ view }: { view: string }) {
  * NO LEFT SIDEBAR. NO VERTICAL NAVIGATION.
  *
  * Three independent floating layers stacked vertically:
+ *   1. Floating Header (top: 20, h: 72, L/R: 20)
+ *   2. Floating Dock Nav (top: 108, h: 64, max-w: 1400, pill)
+ *   3. Floating Content (top: 192, L/R/Bottom: 20)
  *
- *   ┌─ Header (top: 20, h: 72, L/R: 20) ─────────────────────────┐
- *   │  Logo  Workspace   Search   Upload 🔔 🌙 👤              │
- *   ├────────────────────────── 16px gap ────────────────────────┤
- *   ├─ Dock (top: 108, h: 64, max-w: 1400, rounded-full) ────────┤
- *   │  🏠 Dashboard │ 📁 Files │ 👥 Users │ 📊 Reports │ ⚙ Settings │
- *   ├────────────────────────── 20px gap ────────────────────────┤
- *   ┌─ Content (top: 192, L/R/Bottom: 20) ───────────────────────┐
- *   │  Breadcrumbs                                                 │
- *   │  [active view content]                                       │
- *   └──────────────────────────────────────────────────────────────┘
- *
- * The dock is horizontally scrollable, drag-able, snap-scrolling, with
- * arrow buttons and keyboard ← → navigation.
+ * Every view is wrapped in an ErrorBoundary so a runtime crash in one view
+ * shows a professional error UI instead of a blank screen.
+ * Every view is permission-checked before render — denied views show 403 UI.
  */
 export function AppShell() {
   const { isAuthed, view } = useApp()
@@ -74,20 +117,15 @@ export function AppShell() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Layer 1 — Floating Header (always visible) */}
       <FloatingHeader />
-
-      {/* Layer 2 — Floating Horizontal Dock Nav (NO LEFT SIDEBAR) */}
       <FloatingDockNav />
-
-      {/* Layer 3 — Floating Content Card (full width below dock) */}
       <FloatingContent>
         <ViewRenderer view={view} />
       </FloatingContent>
 
-      {/* Global overlays */}
       <QuickFind />
       <UploadModal />
+      <UploadManager />
       <ToastBridge />
       <RoleSwitcher />
     </div>

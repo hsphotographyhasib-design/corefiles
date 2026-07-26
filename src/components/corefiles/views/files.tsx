@@ -13,6 +13,7 @@ import {
   folders, files, userById, fmtBytes, fileTypeMeta, type FileItem, type FolderNode,
 } from '@/components/corefiles/data/mock'
 import { useApp } from '@/lib/corefiles/store'
+import { useUploadEngine } from '@/lib/corefiles/upload-engine'
 import { Avatar } from '@/components/corefiles/common/avatar'
 import { toast } from '@/components/corefiles/common/toast-bridge'
 import { formatDistanceToNow } from 'date-fns'
@@ -362,7 +363,8 @@ function FilePreviewDrawer({ file, onClose }: { file: FileItem; onClose: () => v
 // ---------------- Main view ----------------
 
 export function FileManagerView() {
-  const { currentFolderId, setCurrentFolder, selectedFileId, setSelectedFile, setUploadOpen, toast } = useApp()
+  const { currentFolderId, setCurrentFolder, selectedFileId, setSelectedFile, toast } = useApp()
+  const setModalOpen = useUploadEngine(s => s.setModalOpen)
   const [view, setView] = React.useState<'grid' | 'list'>('grid')
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())
   const [sortBy, setSortBy] = React.useState<'name' | 'date' | 'size'>('date')
@@ -411,7 +413,7 @@ export function FileManagerView() {
             </div>
 
             {/* Actions */}
-            <button onClick={() => setUploadOpen(true)} className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:shadow-glow">
+            <button onClick={() => setModalOpen(true)} className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:shadow-glow">
               <Upload size={13} /> Upload
             </button>
             <button onClick={() => toast('New folder created')} className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs hover:bg-accent">

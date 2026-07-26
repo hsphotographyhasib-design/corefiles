@@ -7,8 +7,11 @@ import type { RoleKey } from '@/components/corefiles/data/menu'
 export type ViewKey =
   | 'dashboard'
   | 'files'
+  | 'folders'
   | 'favorites'
   | 'recent'
+  | 'shared'
+  | 'downloads'
   | 'trash'
   | 'search'
   | 'users'
@@ -22,6 +25,8 @@ export type ViewKey =
   | 'admin'
   | 'monitoring'
   | 'settings'
+  | 'support'
+  | 'not-found'
 
 export interface Workspace {
   id: string
@@ -54,10 +59,6 @@ interface AppState {
   // Quick find (⌘K)
   quickFindOpen: boolean
   setQuickFind: (open: boolean) => void
-
-  // Upload modal
-  uploadOpen: boolean
-  setUploadOpen: (open: boolean) => void
 
   // Notifications
   notifications: NotificationItem[]
@@ -108,9 +109,6 @@ export const useApp = create<AppState>((set, get) => ({
 
   quickFindOpen: false,
   setQuickFind: (open) => set({ quickFindOpen: open }),
-
-  uploadOpen: false,
-  setUploadOpen: (open) => set({ uploadOpen: open }),
 
   notifications: initialNotifications,
   markNotificationRead: (id) =>
