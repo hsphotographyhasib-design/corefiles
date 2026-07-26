@@ -214,6 +214,7 @@ export function UploadManager() {
   return (
     <AnimatePresence>
       <motion.div
+        key="upload-manager"
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -341,6 +342,7 @@ export function UploadManager() {
 
       {/* Conflict resolution dialog */}
       <ConflictDialog
+        key="conflict-dialog"
         item={conflictItem}
         onClose={() => setConflictItem(null)}
       />
