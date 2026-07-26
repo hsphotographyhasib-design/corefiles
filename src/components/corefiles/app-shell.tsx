@@ -3,11 +3,14 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '@/lib/corefiles/store'
-import { Sidebar } from '@/components/corefiles/shell/sidebar'
-import { TopBar } from '@/components/corefiles/shell/topbar'
+import { FloatingTopBar } from '@/components/corefiles/shell/floating-topbar'
+import { FloatingLeftNav } from '@/components/corefiles/shell/floating-left-nav'
+import { FloatingBreadcrumbs } from '@/components/corefiles/shell/floating-breadcrumbs'
+import { MobileBottomNav } from '@/components/corefiles/shell/mobile-bottom-nav'
 import { QuickFind } from '@/components/corefiles/shell/quick-find'
 import { UploadModal } from '@/components/corefiles/shell/upload-modal'
 import { ToastBridge } from '@/components/corefiles/common/toast-bridge'
+import { RoleSwitcher } from '@/components/corefiles/shell/role-switcher'
 import { LoginScreen } from '@/components/corefiles/views/login'
 import { DashboardView } from '@/components/corefiles/views/dashboard'
 import { FileManagerView } from '@/components/corefiles/views/files'
@@ -46,33 +49,49 @@ function ViewRenderer({ view }: { view: string }) {
 }
 
 export function AppShell() {
-  const { isAuthed, view, sidebarCollapsed } = useApp()
+  const { isAuthed, view } = useApp()
 
   if (!isAuthed) return <LoginScreen />
 
   return (
-    <div className="flex min-h-screen gap-0 p-4">
-      <Sidebar />
-      <main className="flex min-w-0 flex-1 flex-col">
-        <TopBar />
-        <div className="flex-1 px-0 pb-8">
+    <div className="min-h-screen">
+      {/* Floating top header */}
+      <FloatingTopBar />
+
+      {/* Breadcrumb row (below header, floats inside main container) */}
+      <div className="mx-auto mt-3 w-[calc(100vw-2rem)] max-w-[1600px]">
+        <FloatingBreadcrumbs />
+      </div>
+
+      {/* Main content with floating left nav */}
+      <div className="mx-auto mt-3 flex w-[calc(100vw-2rem)] max-w-[1600px] gap-4 pb-32 md:pb-8">
+        <FloatingLeftNav />
+
+        <main className="min-w-0 flex-1">
           <AnimatePresence mode="wait">
             <motion.div
               key={view}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
             >
               <ViewRenderer view={view} />
             </motion.div>
           </AnimatePresence>
-        </div>
-      </main>
+        </main>
+      </div>
 
+      {/* Floating mobile bottom nav */}
+      <MobileBottomNav />
+
+      {/* Global modals & overlays */}
       <QuickFind />
       <UploadModal />
       <ToastBridge />
+
+      {/* Demo: floating role switcher to preview permission-based menu */}
+      <RoleSwitcher />
     </div>
   )
 }
