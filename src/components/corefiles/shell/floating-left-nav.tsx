@@ -6,9 +6,7 @@ import { useApp, type NavState } from '@/lib/corefiles/store'
 import {
   getMenuForRole, menuGroups, type MenuItem, type RoleKey,
 } from '@/components/corefiles/data/menu'
-import { useApp as useAppStore } from '@/lib/corefiles/store'
 import { cn } from '@/lib/utils'
-import { ChevronRight } from 'lucide-react'
 
 const widthMap: Record<NavState, number> = {
   expanded: 280,
@@ -16,37 +14,7 @@ const widthMap: Record<NavState, number> = {
   hidden: 0,
 }
 
-/** Hook: tracks mouse activity inside the nav and auto-collapses after 2s idle. */
-function useAutoCollapse(navState: NavState) {
-  const { collapseNav, expandNav, navUserOverride } = useAppStore()
-  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
-  const hovering = React.useRef(false)
-
-  const onEnter = React.useCallback(() => {
-    hovering.current = true
-    if (timer.current) clearTimeout(timer.current)
-    // If user hasn't explicitly set state, expand on hover
-    if (!navUserOverride && navState !== 'expanded') expandNav()
-  }, [navState, navUserOverride, expandNav])
-
-  const onLeave = React.useCallback(() => {
-    hovering.current = false
-    if (timer.current) clearTimeout(timer.current)
-    if (!navUserOverride) {
-      timer.current = setTimeout(() => {
-        if (!hovering.current) collapseNav()
-      }, 2000)
-    }
-  }, [navUserOverride, collapseNav])
-
-  React.useEffect(() => {
-    return () => { if (timer.current) clearTimeout(timer.current) }
-  }, [])
-
-  return { onEnter, onLeave }
-}
-
-/** Tooltip shown when nav is collapsed */
+/** Tooltip shown when nav is collapsed (icons-only mode). */
 function NavTooltip({ label, shortcut }: { label: string; shortcut?: string }) {
   return (
     <motion.div
@@ -54,8 +22,9 @@ function NavTooltip({ label, shortcut }: { label: string; shortcut?: string }) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -6 }}
       transition={{ duration: 0.12 }}
-      className="cf-tooltip glass-nav pointer-events-none fixed left-[88px] z-50 flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-1.5 text-xs font-medium"
+      className="cf-tooltip glass-nav pointer-events-none fixed z-50 flex items-center gap-2 whitespace-nowrap rounded-xl px-3 py-1.5 text-xs font-medium"
       role="tooltip"
+      style={{ left: 96 }}
     >
       {label}
       {shortcut && (
@@ -80,6 +49,16 @@ function NavItem({
 }) {
   const [hovered, setHovered] = React.useState(false)
   const Icon = item.icon
+  const itemRef = React.useRef<HTMLButtonElement>(null)
+  const [tooltipTop, setTooltipTop] = React.useState(0)
+
+  // Position tooltip vertically aligned with the item
+  React.useEffect(() => {
+    if (hovered && collapsed && itemRef.current) {
+      const rect = itemRef.current.getBoundingClientRect()
+      setTooltipTop(rect.top + rect.height / 2 - 14) // 14 = half tooltip height
+    }
+  }, [hovered, collapsed])
 
   return (
     <div
@@ -88,6 +67,7 @@ function NavItem({
       onMouseLeave={() => setHovered(false)}
     >
       <button
+        ref={itemRef}
         onClick={onClick}
         aria-current={active ? 'page' : undefined}
         aria-label={item.name}
@@ -144,7 +124,9 @@ function NavItem({
       {/* Tooltip when collapsed */}
       <AnimatePresence>
         {collapsed && hovered && (
-          <NavTooltip label={item.name} shortcut={item.shortcut} />
+          <div className="pointer-events-none fixed" style={{ top: tooltipTop }}>
+            <NavTooltip label={item.name} shortcut={item.shortcut} />
+          </div>
         )}
       </AnimatePresence>
 
@@ -161,13 +143,23 @@ export function FloatingLeftNav() {
   const role = (user?.role || 'Employee') as RoleKey
   const items = React.useMemo(() => getMenuForRole(role), [role])
   const unread = notifications.filter(n => !n.read).length
-  const { onEnter, onLeave } = useAutoCollapse(navState)
 
-  // Hidden state — render nothing (animation handles the collapse)
+  // Hover-to-expand when collapsed (smart peek — doesn't persist)
+  const [hoverPeek, setHoverPeek] = React.useState(false)
+  const handleEnter = React.useCallback(() => {
+    if (navState === 'collapsed') setHoverPeek(true)
+  }, [navState])
+  const handleLeave = React.useCallback(() => {
+    setHoverPeek(false)
+  }, [])
+
+  // Effective state: hover peek expands the collapsed nav temporarily
+  const effectiveState: NavState = hoverPeek && navState === 'collapsed' ? 'expanded' : navState
+  const width = widthMap[effectiveState]
+  const collapsed = effectiveState === 'collapsed'
+
+  // Hidden state — render nothing (animation handles the slide-away)
   if (navState === 'hidden') return null
-
-  const width = widthMap[navState]
-  const collapsed = navState === 'collapsed'
 
   // Group items by group_id, preserving sort order
   const grouped = menuGroups
@@ -189,16 +181,20 @@ export function FloatingLeftNav() {
       initial={false}
       animate={{ width, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
-      className="sticky top-[100px] z-30 hidden h-[calc(100vh-124px)] md:block"
-      aria-label="Primary navigation"
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      // Spec: Top 108px, Left 20px, Bottom 20px, Width 280px, Radius 24px
+      // Hidden on tablet/mobile (lg breakpoint = 1024px)
+      className="glass-nav fixed bottom-5 left-5 top-[108px] z-40 hidden w-[280px] rounded-3xl lg:block"
+      role="navigation"
+      aria-label="Primary"
     >
       <div
         className={cn(
-          'glass-nav flex h-full flex-col rounded-3xl p-3 transition-all',
+          'flex h-full flex-col rounded-3xl p-3 transition-all',
           collapsed ? 'items-center' : 'items-stretch',
         )}
+        style={{ width }}
       >
         {/* Workspace mini badge at top (only when expanded) */}
         <AnimatePresence>
@@ -221,8 +217,11 @@ export function FloatingLeftNav() {
           )}
         </AnimatePresence>
 
-        {/* Scrollable nav */}
-        <nav className="cf-scroll -mr-1 flex-1 space-y-4 overflow-y-auto pr-1" aria-label="Main">
+        {/* Scrollable nav — independent of page scroll (because parent is fixed) */}
+        <nav
+          className="cf-scroll -mr-1 flex-1 space-y-4 overflow-y-auto pr-1"
+          aria-label="Main navigation"
+        >
           {grouped.map(({ group, items: groupItems }) => (
             <div key={group.id}>
               <AnimatePresence>
@@ -243,7 +242,10 @@ export function FloatingLeftNav() {
                     <NavItem
                       item={item}
                       collapsed={collapsed}
-                      active={view === item.url && item.id !== 'm-folders' && item.id !== 'm-shared' && item.id !== 'm-downloads' && item.id !== 'm-storage' && item.id !== 'm-backups' && item.id !== 'm-support'}
+                      active={view === item.url &&
+                        item.id !== 'm-folders' && item.id !== 'm-shared' &&
+                        item.id !== 'm-downloads' && item.id !== 'm-storage' &&
+                        item.id !== 'm-backups' && item.id !== 'm-support'}
                       badge={item.badge_key === 'notifications' ? unread : undefined}
                       onClick={() => handleClick(item)}
                     />
@@ -254,7 +256,7 @@ export function FloatingLeftNav() {
           ))}
         </nav>
 
-        {/* Footer: collapse toggle hint + quick stats */}
+        {/* Footer: collapse hint */}
         <div className="mt-2 border-t border-border/60 pt-2">
           <AnimatePresence mode="wait" initial={false}>
             {!collapsed ? (
@@ -267,7 +269,7 @@ export function FloatingLeftNav() {
               >
                 <span>v2.4.1</span>
                 <span className="flex items-center gap-1">
-                  <kbd>⌘</kbd><kbd>\\</kbd> to collapse
+                  <kbd>⌘</kbd><kbd>\</kbd> to collapse
                 </span>
               </motion.div>
             ) : (
@@ -288,21 +290,4 @@ export function FloatingLeftNav() {
       </div>
     </motion.aside>
   )
-}
-
-// Keyboard shortcut: ⌘\ toggles nav
-if (typeof window !== 'undefined') {
-  let bound = false
-  if (!bound) {
-    bound = true
-    // Defer binding to allow Zustand hydration
-    setTimeout(() => {
-      window.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
-          e.preventDefault()
-          useAppStore.getState().toggleNav()
-        }
-      })
-    }, 100)
-  }
 }

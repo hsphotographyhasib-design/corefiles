@@ -8,13 +8,21 @@ import { Avatar } from '@/components/corefiles/common/avatar'
 import { Upload, Bell } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
+/**
+ * MobileBottomNav — floating glass bar fixed at bottom with center FAB.
+ *
+ * Layout: [ Dashboard | Files ] [ FAB Upload ] [ Notifications | Profile ]
+ *
+ * Spec:
+ *   - Mobile: Header + Bottom Floating Navigation + Floating FAB Upload
+ *   - Hidden at md+ (where FloatingLeftNav takes over)
+ */
 export function MobileBottomNav() {
   const { user, view, setView, setUploadOpen, notifications, setBreadcrumbs } = useApp()
   const role = (user?.role || 'Employee') as RoleKey
   const items = React.useMemo(() => getMobileMenu(role), [role])
   const unread = notifications.filter(n => !n.read).length
 
-  // Mobile shows 5 items, with FAB (Upload) in the center (index 2)
   const leftItems = items.slice(0, 2)
   const rightItems = items.slice(3, 5)
 
@@ -29,7 +37,8 @@ export function MobileBottomNav() {
       initial={{ opacity: 0, y: 80 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 240, damping: 28 }}
-      className="glass-mobile fixed bottom-4 left-1/2 z-40 flex w-[calc(100vw-2rem)] max-w-md -translate-x-1/2 items-center justify-around rounded-3xl px-3 py-2.5 md:hidden"
+      // Fixed at bottom: floating glass bar with FAB
+      className="glass-mobile fixed bottom-3 left-3 right-3 z-40 flex items-center justify-around rounded-3xl px-2 py-2.5 md:hidden"
       aria-label="Mobile navigation"
     >
       {/* Left items */}
@@ -41,7 +50,7 @@ export function MobileBottomNav() {
             <button
               key={item.id}
               onClick={() => handleClick(item)}
-              className="cf-focus-ring flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5"
+              className="cf-focus-ring relative flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5"
               aria-label={item.name}
               aria-current={active ? 'page' : undefined}
             >
@@ -66,19 +75,19 @@ export function MobileBottomNav() {
 
       {/* Center FAB — Upload */}
       <div className="px-2">
-        <button
+        <motion.button
+          whileTap={{ scale: 0.88 }}
           onClick={() => setUploadOpen(true)}
-          className="fab-gradient grid h-14 w-14 -translate-y-3 place-items-center rounded-2xl text-white transition-transform active:scale-90"
+          className="fab-gradient grid h-14 w-14 -translate-y-3 place-items-center rounded-2xl text-white"
           aria-label="Quick upload"
         >
           <Upload size={22} strokeWidth={2.4} />
-        </button>
+        </motion.button>
       </div>
 
       {/* Right items */}
       <div className="flex flex-1 items-center justify-around gap-1">
-        {rightItems.map((item, i) => {
-          // First right item is notifications with badge
+        {rightItems.map((item) => {
           const isNotif = item.id === 'm-notifications'
           const active = view === item.url
           const Icon = isNotif ? Bell : item.icon

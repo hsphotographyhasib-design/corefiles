@@ -6,6 +6,7 @@ import {
   Search, Bell, Upload, Sun, Moon, ChevronDown, Check, LogOut,
   User as UserIcon, Settings as SettingsIcon, Shield, UserCog,
   CheckCheck, Globe, Building2, Command, PanelLeftClose, PanelLeftOpen,
+  Menu as MenuIcon, Boxes,
 } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
 import { Avatar } from '@/components/corefiles/common/avatar'
@@ -28,11 +29,11 @@ const languages = [
   { code: 'ar', name: 'العربية', flag: '🇸🇦' },
 ]
 
-export function FloatingTopBar() {
+export function FloatingHeader() {
   const {
     user, workspaces, currentWorkspaceId, setWorkspace,
     setQuickFind, setUploadOpen, notifications, markAllRead, markNotificationRead,
-    setView, navState, toggleNav,
+    setView, navState, toggleNav, setDrawerOpen,
   } = useApp()
   const { theme, setTheme } = useTheme()
   const [notifOpen, setNotifOpen] = React.useState(false)
@@ -48,7 +49,7 @@ export function FloatingTopBar() {
   const unread = notifications.filter(n => !n.read).length
   const currentWs = workspaces.find(w => w.id === currentWorkspaceId)!
 
-  // ⌘K + ⌘U keyboard shortcuts
+  // ⌘K + ⌘U + ⌘\ keyboard shortcuts
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -59,10 +60,14 @@ export function FloatingTopBar() {
         e.preventDefault()
         setUploadOpen(true)
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
+        e.preventDefault()
+        toggleNav()
+      }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [setQuickFind, setUploadOpen])
+  }, [setQuickFind, setUploadOpen, toggleNav])
 
   // Close popovers on outside click
   React.useEffect(() => {
@@ -79,36 +84,45 @@ export function FloatingTopBar() {
 
   return (
     <motion.header
-      initial={{ opacity: 0, y: -16 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: -16, filter: 'blur(8px)' }}
+      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ type: 'spring', stiffness: 220, damping: 28 }}
-      className="sticky top-4 z-40 mx-auto w-[calc(100vw-2rem)] max-w-[1600px]"
+      // Spec: Top 20px, Left 20px, Right 20px, Height 72px, Radius 24px
+      className="glass-nav fixed left-5 right-5 top-5 z-50 h-[72px] rounded-3xl"
+      role="banner"
     >
-      <div className="glass-nav flex h-[72px] items-center gap-2 rounded-3xl px-4 sm:px-5">
+      <div className="flex h-full items-center gap-2 px-3 sm:px-4">
         {/* LEFT — Logo + Workspace */}
-        <div className="flex items-center gap-2">
-          {/* Nav toggle */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Nav toggle (desktop) / Drawer trigger (tablet/mobile) */}
           <button
-            onClick={toggleNav}
+            onClick={() => {
+              // On tablet/mobile, open drawer; on desktop, toggle nav
+              if (window.matchMedia('(max-width: 1023px)').matches) setDrawerOpen(true)
+              else toggleNav()
+            }}
             className="cf-focus-ring grid h-10 w-10 place-items-center rounded-2xl text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             aria-label={navState === 'expanded' ? 'Collapse navigation' : 'Expand navigation'}
-            title={navState === 'expanded' ? 'Collapse nav (⌘\\)' : 'Expand nav'}
+            title="Toggle navigation (⌘\\)"
           >
             <AnimatePresence mode="wait" initial={false}>
-              {navState === 'expanded' ? (
-                <motion.span key="close" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.15 }}>
-                  <PanelLeftClose size={18} />
-                </motion.span>
-              ) : (
-                <motion.span key="open" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.15 }}>
-                  <PanelLeftOpen size={18} />
-                </motion.span>
-              )}
+              <motion.span
+                key={navState}
+                initial={{ opacity: 0, rotate: -90 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.15 }}
+              >
+                {navState === 'expanded' ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
+              </motion.span>
             </AnimatePresence>
           </button>
 
           {/* Logo */}
-          <button onClick={() => useApp.getState().setView('dashboard')} className="flex items-center gap-2.5 rounded-2xl px-1.5 py-1 transition-colors hover:bg-accent/50">
+          <button
+            onClick={() => useApp.getState().setView('dashboard')}
+            className="cf-focus-ring flex items-center gap-2.5 rounded-2xl px-1.5 py-1 transition-colors hover:bg-accent/50"
+          >
             <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-glow">
               <Boxes size={20} strokeWidth={2.4} />
             </div>
@@ -118,11 +132,11 @@ export function FloatingTopBar() {
             </div>
           </button>
 
-          {/* Workspace selector */}
+          {/* Workspace selector (desktop only) */}
           <div ref={workspaceRef} className="relative hidden md:block">
             <button
               onClick={() => setWorkspaceOpen(o => !o)}
-              className="cf-focus-ring flex items-center gap-2 rounded-xl border border-border/60 bg-background/40 px-2.5 py-2 transition-colors hover:bg-accent/60"
+              className="cf-focus-ring flex items-center gap-2 rounded-2xl border border-border/60 bg-background/40 px-2.5 py-2 transition-colors hover:bg-accent/60"
             >
               <span className="grid h-6 w-6 place-items-center rounded-md text-[10px] font-bold text-white" style={{ background: currentWs.color }}>
                 {currentWs.initials}
@@ -213,7 +227,7 @@ export function FloatingTopBar() {
             </AnimatePresence>
           </button>
 
-          {/* Language */}
+          {/* Language (desktop) */}
           <div ref={langRef} className="relative hidden lg:block">
             <button
               onClick={() => setLangOpen(o => !o)}
@@ -377,6 +391,3 @@ export function FloatingTopBar() {
     </motion.header>
   )
 }
-
-// Need to import Boxes — kept at bottom for readability
-import { Boxes } from 'lucide-react'

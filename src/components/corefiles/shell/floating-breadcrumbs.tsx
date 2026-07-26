@@ -6,6 +6,11 @@ import { ChevronRight, Home } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
 import { cn } from '@/lib/utils'
 
+/**
+ * FloatingBreadcrumbs — inline breadcrumb row rendered inside the FloatingContent
+ * card. Items are clickable for backward navigation; clicking a parent truncates
+ * the trail to that position.
+ */
 export function FloatingBreadcrumbs() {
   const { breadcrumbs, setView, setCurrentFolder, setBreadcrumbs } = useApp()
 
@@ -13,7 +18,6 @@ export function FloatingBreadcrumbs() {
     if (!crumb.view && !crumb.folderId) return
     if (crumb.view) setView(crumb.view)
     if (crumb.folderId) setCurrentFolder(crumb.folderId)
-    // Truncate breadcrumbs to clicked position
     setBreadcrumbs(breadcrumbs.slice(0, idx + 1))
   }
 
@@ -25,7 +29,7 @@ export function FloatingBreadcrumbs() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
       aria-label="Breadcrumb"
-      className="flex items-center gap-1 overflow-x-auto no-scrollbar rounded-2xl px-1 py-2 text-sm"
+      className="flex items-center gap-1 overflow-x-auto no-scrollbar text-sm"
     >
       <button
         onClick={() => { setView('dashboard'); setBreadcrumbs([{ label: 'Dashboard', view: 'dashboard' }]) }}

@@ -1,11 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '@/lib/corefiles/store'
-import { FloatingTopBar } from '@/components/corefiles/shell/floating-topbar'
+import { FloatingHeader } from '@/components/corefiles/shell/floating-topbar'
 import { FloatingLeftNav } from '@/components/corefiles/shell/floating-left-nav'
-import { FloatingBreadcrumbs } from '@/components/corefiles/shell/floating-breadcrumbs'
+import { FloatingContent } from '@/components/corefiles/shell/floating-content'
+import { TabletNavDrawer } from '@/components/corefiles/shell/tablet-nav-drawer'
 import { MobileBottomNav } from '@/components/corefiles/shell/mobile-bottom-nav'
 import { QuickFind } from '@/components/corefiles/shell/quick-find'
 import { UploadModal } from '@/components/corefiles/shell/upload-modal'
@@ -48,49 +48,56 @@ function ViewRenderer({ view }: { view: string }) {
   }
 }
 
+/**
+ * AppShell — the CoreFiles floating layout.
+ *
+ * Two independent floating layers (header + nav) with a 16px visible gap between
+ * them, plus a third floating layer (content) that also floats as its own card.
+ * Everything is `position: fixed` with the spec-defined offsets so the page
+ * background remains visible behind the glass surfaces — Arc Browser / VisionOS feel.
+ *
+ *   ┌──────────────────────────────────────────────────────────┐
+ *   │  (transparent page background — decorative gradients)   │
+ *   │  ╭──────────────────────────────────────────────────╮    │
+ *   │  │ HEADER  top: 20px, left/right: 20px, h: 72px    │    │
+ *   │  ╰──────────────────────────────────────────────────╯    │
+ *   │  ←16px gap→                                              │
+ *   │  ╭──────────╮  ╭────────────────────────────────────╮    │
+ *   │  │   NAV    │  │  CONTENT (floats as its own card)  │    │
+ *   │  │ top:108  │  │  top: 108px, padding: 32px         │    │
+ *   │  │ w: 280   │  │  left: 320px (when nav expanded)   │    │
+ *   │  │          │  │                                    │    │
+ *   │  ╰──────────╯  ╰────────────────────────────────────╯    │
+ *   └──────────────────────────────────────────────────────────┘
+ */
 export function AppShell() {
   const { isAuthed, view } = useApp()
 
   if (!isAuthed) return <LoginScreen />
 
   return (
-    <div className="min-h-screen">
-      {/* Floating top header */}
-      <FloatingTopBar />
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Layer 1 — Floating header (always visible, all breakpoints) */}
+      <FloatingHeader />
 
-      {/* Breadcrumb row (below header, floats inside main container) */}
-      <div className="mx-auto mt-3 w-[calc(100vw-2rem)] max-w-[1600px]">
-        <FloatingBreadcrumbs />
-      </div>
+      {/* Layer 2 — Floating left nav (desktop only; tablet/mobile uses drawer) */}
+      <FloatingLeftNav />
 
-      {/* Main content with floating left nav */}
-      <div className="mx-auto mt-3 flex w-[calc(100vw-2rem)] max-w-[1600px] gap-4 pb-32 md:pb-8">
-        <FloatingLeftNav />
+      {/* Layer 2 alt — Overlay drawer for tablet/mobile when triggered */}
+      <TabletNavDrawer />
 
-        <main className="min-w-0 flex-1">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={view}
-              initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
-              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <ViewRenderer view={view} />
-            </motion.div>
-          </AnimatePresence>
-        </main>
-      </div>
+      {/* Layer 3 — Floating content card (the main scroll container) */}
+      <FloatingContent>
+        <ViewRenderer view={view} />
+      </FloatingContent>
 
-      {/* Floating mobile bottom nav */}
+      {/* Mobile bottom nav with FAB (replaces left nav on mobile) */}
       <MobileBottomNav />
 
-      {/* Global modals & overlays */}
+      {/* Global overlays */}
       <QuickFind />
       <UploadModal />
       <ToastBridge />
-
-      {/* Demo: floating role switcher to preview permission-based menu */}
       <RoleSwitcher />
     </div>
   )

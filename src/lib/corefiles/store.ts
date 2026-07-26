@@ -33,6 +33,31 @@ export interface Workspace {
   initials: string
 }
 
+const NAV_STATE_KEY = 'corefiles:nav-state'
+const NAV_OVERRIDE_KEY = 'corefiles:nav-override'
+
+/** Read persisted nav state on client (SSR-safe — defaults to expanded). */
+function readNavState(): NavState {
+  if (typeof window === 'undefined') return 'expanded'
+  try {
+    const v = localStorage.getItem(NAV_STATE_KEY)
+    return v === 'collapsed' || v === 'hidden' || v === 'expanded' ? v : 'expanded'
+  } catch { return 'expanded' }
+}
+
+function readNavOverride(): boolean {
+  if (typeof window === 'undefined') return false
+  try { return localStorage.getItem(NAV_OVERRIDE_KEY) === 'true' } catch { return false }
+}
+
+function persistNavState(state: NavState, override: boolean) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(NAV_STATE_KEY, state)
+    localStorage.setItem(NAV_OVERRIDE_KEY, String(override))
+  } catch { /* ignore */ }
+}
+
 interface AppState {
   // Auth
   isAuthed: boolean
@@ -52,11 +77,17 @@ interface AppState {
 
   // Floating nav state — 'auto' lets user override the smart auto-hide
   navState: NavState
-  navUserOverride: boolean // true = user explicitly toggled
+  navUserOverride: boolean
   setNavState: (s: NavState) => void
   toggleNav: () => void
+  cycleNav: () => void
   collapseNav: () => void
   expandNav: () => void
+  hideNav: () => void
+
+  // Tablet drawer
+  drawerOpen: boolean
+  setDrawerOpen: (open: boolean) => void
 
   // Breadcrumbs (clickable)
   breadcrumbs: { label: string; view?: ViewKey; folderId?: string }[]
@@ -102,8 +133,8 @@ export const useApp = create<AppState>((set, get) => ({
       isAuthed: true,
       user: { id: 'u-1', name: 'Hasan Rahman', email: 'hasan@hasanurjaya.com', role },
       view: 'dashboard',
-      navState: 'expanded',
-      navUserOverride: false,
+      navState: readNavState(),
+      navUserOverride: readNavOverride(),
       breadcrumbs: [{ label: 'Dashboard', view: 'dashboard' }],
     }),
   logout: () => set({ isAuthed: false, user: null, view: 'dashboard' }),
@@ -116,15 +147,38 @@ export const useApp = create<AppState>((set, get) => ({
   view: 'dashboard',
   setView: (v) => set({ view: v }),
 
-  navState: 'expanded',
-  navUserOverride: false,
-  setNavState: (s) => set({ navState: s, navUserOverride: true }),
-  toggleNav: () => set((s) => {
-    const next: NavState = s.navState === 'expanded' ? 'collapsed' : 'expanded'
-    return { navState: next, navUserOverride: true }
-  }),
-  collapseNav: () => set({ navState: 'collapsed', navUserOverride: true }),
-  expandNav: () => set({ navState: 'expanded', navUserOverride: false }),
+  navState: readNavState(),
+  navUserOverride: readNavOverride(),
+  setNavState: (s) => {
+    persistNavState(s, true)
+    set({ navState: s, navUserOverride: true })
+  },
+  toggleNav: () => {
+    const next: NavState = get().navState === 'expanded' ? 'collapsed' : 'expanded'
+    persistNavState(next, true)
+    set({ navState: next, navUserOverride: true })
+  },
+  cycleNav: () => {
+    const cur = get().navState
+    const next: NavState = cur === 'expanded' ? 'collapsed' : cur === 'collapsed' ? 'hidden' : 'expanded'
+    persistNavState(next, true)
+    set({ navState: next, navUserOverride: true })
+  },
+  collapseNav: () => {
+    persistNavState('collapsed', get().navUserOverride)
+    set({ navState: 'collapsed' })
+  },
+  expandNav: () => {
+    // Smart expand (hover, focus) — does NOT mark as user override
+    set({ navState: 'expanded' })
+  },
+  hideNav: () => {
+    persistNavState('hidden', true)
+    set({ navState: 'hidden', navUserOverride: true })
+  },
+
+  drawerOpen: false,
+  setDrawerOpen: (open) => set({ drawerOpen: open }),
 
   breadcrumbs: [{ label: 'Dashboard', view: 'dashboard' }],
   setBreadcrumbs: (b) => set({ breadcrumbs: b }),
