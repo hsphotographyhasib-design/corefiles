@@ -176,15 +176,39 @@ export function UploadManager() {
   const { setView } = useApp()
   const [expanded, setExpanded] = React.useState(true)
   const [conflictItem, setConflictItem] = React.useState<UploadItem | null>(null)
+  // Track whether the user has manually dismissed the manager.
+  // Once dismissed, we DON'T auto-reopen — even if items still exist.
+  // Reset only when the queue becomes completely empty (new upload session).
+  const userDismissedRef = React.useRef(false)
+  const prevItemsCountRef = React.useRef(items.length)
 
   const hasItems = items.length > 0
   const active = activeCount()
   const overall = overallProgress()
 
-  // Auto-open manager when items arrive
+  // Auto-open manager ONLY when items first appear (count goes 0 → N).
+  // If the user has dismissed it, never force it back open.
   React.useEffect(() => {
-    if (hasItems && !isManagerOpen) setManagerOpen(true)
-  }, [hasItems, isManagerOpen, setManagerOpen])
+    const prevCount = prevItemsCountRef.current
+    const justGotItems = prevCount === 0 && items.length > 0
+
+    if (justGotItems && !userDismissedRef.current && !isManagerOpen) {
+      setManagerOpen(true)
+    }
+
+    // Reset the dismissal flag when queue empties out (new upload session)
+    if (items.length === 0 && userDismissedRef.current) {
+      userDismissedRef.current = false
+    }
+
+    prevItemsCountRef.current = items.length
+  }, [items.length, isManagerOpen, setManagerOpen])
+
+  // Wrap setManagerOpen so we can detect manual dismissal
+  const handleClose = React.useCallback(() => {
+    userDismissedRef.current = true
+    setManagerOpen(false)
+  }, [setManagerOpen])
 
   // Listen for upload completion events (for notifications + audit log)
   React.useEffect(() => {
@@ -249,7 +273,7 @@ export function UploadManager() {
               {expanded ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
             </button>
             <button
-              onClick={() => setManagerOpen(false)}
+              onClick={handleClose}
               className="grid h-7 w-7 place-items-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
               aria-label="Minimize"
             >
