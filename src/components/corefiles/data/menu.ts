@@ -66,7 +66,10 @@ export const menuGroups: MenuGroup[] = [
 ]
 
 // ----------------------------- Items -----------------------------
-// 15 items per spec — every one has a distinct route + view.
+// Desktop dock = 12 items per spec: Dashboard, Files, Folders, Favorites,
+// Recent, Shared, Downloads, Trash, Users, Roles, Reports, Settings.
+// Mobile bottom nav = 5 items: Home (Dashboard), Files, Upload (FAB),
+// Notifications, Profile. Other items accessed via "More" sheet.
 
 export const menuItems: MenuItem[] = [
   // Workspace (9 items — upload is a full-page workspace, not in the dock)
@@ -80,18 +83,18 @@ export const menuItems: MenuItem[] = [
   { id: 'm-downloads', group_id: 'g-workspace', name: 'Downloads', icon: Download, url: 'downloads', sort_order: 8, parent_id: null, visible: true, in_dock: true, permission_required: 'download' },
   { id: 'm-trash', group_id: 'g-workspace', name: 'Trash', icon: Trash2, url: 'trash', sort_order: 9, parent_id: null, visible: true, in_dock: true, permission_required: 'restore' },
 
-  // Management (6 items, 4 in dock — Activity Logs + Storage stay in Quick Find)
+  // Management (6 items)
   { id: 'm-users', group_id: 'g-management', name: 'Users', icon: Users, url: 'users', sort_order: 1, parent_id: null, visible: true, in_dock: true, permission_required: 'manage_users' },
   { id: 'm-roles', group_id: 'g-management', name: 'Roles', icon: Shield, url: 'roles', sort_order: 2, parent_id: null, visible: true, in_dock: true, permission_required: 'manage_roles' },
-  { id: 'm-departments', group_id: 'g-management', name: 'Departments', icon: Building2, url: 'departments', sort_order: 3, parent_id: null, visible: true, in_dock: true, permission_required: 'manage_departments' },
+  { id: 'm-departments', group_id: 'g-management', name: 'Departments', icon: Building2, url: 'departments', sort_order: 3, parent_id: null, visible: true, in_dock: false, permission_required: 'manage_departments' },
   { id: 'm-storage', group_id: 'g-management', name: 'Storage', icon: HardDrive, url: 'admin', sort_order: 4, parent_id: null, visible: true, in_dock: false, permission_required: 'manage_storage' },
   { id: 'm-activity-logs', group_id: 'g-management', name: 'Activity Logs', icon: ScrollText, url: 'activity-logs', sort_order: 5, parent_id: null, visible: true, in_dock: false, permission_required: 'view_logs' },
   { id: 'm-reports', group_id: 'g-management', name: 'Reports', icon: BarChart3, url: 'reports', sort_order: 6, parent_id: null, visible: true, in_dock: true, permission_required: 'view_reports' },
 
-  // System (5 items — Notifications + Backups stay in Quick Find)
+  // System (5 items)
   { id: 'm-settings', group_id: 'g-system', name: 'Settings', icon: Settings, url: 'settings', sort_order: 1, parent_id: null, visible: true, in_dock: true, permission_required: null, shortcut: '⌘,' },
-  { id: 'm-monitoring', group_id: 'g-system', name: 'Monitoring', icon: Server, url: 'monitoring', sort_order: 2, parent_id: null, visible: true, in_dock: true, permission_required: 'view_monitoring' },
-  { id: 'm-support', group_id: 'g-system', name: 'Support', icon: LifeBuoy, url: 'support', sort_order: 3, parent_id: null, visible: true, in_dock: true, permission_required: null },
+  { id: 'm-monitoring', group_id: 'g-system', name: 'Monitoring', icon: Server, url: 'monitoring', sort_order: 2, parent_id: null, visible: true, in_dock: false, permission_required: 'view_monitoring' },
+  { id: 'm-support', group_id: 'g-system', name: 'Support', icon: LifeBuoy, url: 'support', sort_order: 3, parent_id: null, visible: true, in_dock: false, permission_required: null },
   { id: 'm-backups', group_id: 'g-system', name: 'Backups', icon: Database, url: 'admin', sort_order: 4, parent_id: null, visible: true, in_dock: false, permission_required: 'manage_backups' },
   { id: 'm-notifications', group_id: 'g-system', name: 'Notifications', icon: Bell, url: 'notifications', sort_order: 5, parent_id: null, visible: true, in_dock: false, permission_required: null, badge_key: 'notifications' },
 ]
@@ -144,6 +147,37 @@ export function getDockMenuForRole(role: RoleKey): MenuItem[] {
       if (ga !== gb) return ga - gb
       return a.sort_order - b.sort_order
     })
+}
+
+/**
+ * Returns the 5 items for the mobile bottom nav per spec:
+ *   Home (Dashboard) | Files | Upload (FAB, center) | Notifications | Profile
+ * Profile navigates to the More sheet (which lists Users/Roles/Departments/etc).
+ */
+export function getMobileBottomNav(role: RoleKey): MenuItem[] {
+  const visible = getMenuForRole(role)
+  const find = (id: string) => visible.find(i => i.id === id)
+  return [
+    find('m-dashboard') || visible[0],
+    find('m-files') || visible[1],
+    // Center FAB — handled separately by the bottom nav component
+    find('m-notifications') || visible.find(i => i.id === 'm-recent') || visible[2],
+    // "Profile" is a synthetic entry that opens the More sheet
+    {
+      id: 'm-more', group_id: 'g-system', name: 'More', icon: LifeBuoy,
+      url: 'settings' as ViewKey, sort_order: 99, parent_id: null,
+      visible: true, in_dock: false, permission_required: null,
+    },
+  ].filter(Boolean) as MenuItem[]
+}
+
+/** Items shown in the mobile "More" fullscreen sheet (Profile → More). */
+export function getMobileMoreMenu(role: RoleKey): MenuItem[] {
+  const visible = getMenuForRole(role)
+  const moreIds = ['m-users', 'm-roles', 'm-departments', 'm-reports', 'm-monitoring', 'm-backups', 'm-support']
+  return moreIds
+    .map(id => visible.find(i => i.id === id))
+    .filter(Boolean) as MenuItem[]
 }
 
 // Mail icon import kept at bottom for clarity (used for Support email CTA in view)

@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  ChevronLeft, ChevronRight, Plus, Menu as MenuIcon,
+  ChevronLeft, ChevronRight, Plus,
 } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
 import { getDockMenuForRole, type MenuItem, type RoleKey } from '@/components/corefiles/data/menu'
@@ -163,8 +163,10 @@ export function FloatingDockNav() {
       initial={{ opacity: 0, y: -10, scale: 0.97 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', stiffness: 280, damping: 28, delay: 0.05 }}
-      // Spec: top: 108px (header 72 + 16 gap + 20 margin), centered, max 1400px, h-64, rounded-full, p-12px
-      className="fixed left-1/2 top-[108px] z-40 flex h-16 w-[calc(100vw-2.5rem)] max-w-[1400px] -translate-x-1/2 items-center gap-1.5 rounded-full p-3 glass-nav"
+      // Spec: tablet+ (md, 768px+). 8px gap below header (56+8+20 = 84px top).
+      // h-48px, max-w-1500, radius 18px, glass + shadow.
+      // Hidden below md breakpoint — mobile (≤767px) uses bottom nav.
+      className="glass-nav fixed left-1/2 top-[76px] z-40 hidden h-12 w-[calc(100vw-2rem)] max-w-[1500px] -translate-x-1/2 items-center gap-1.5 rounded-[18px] p-2 md:flex lg:top-[84px] lg:w-[calc(100vw-2.5rem)]"
       role="navigation"
       aria-label="Primary"
     >
@@ -215,7 +217,7 @@ export function FloatingDockNav() {
               aria-current={active ? 'page' : undefined}
               aria-label={item.name}
               className={cn(
-                'cf-focus-ring group relative flex h-11 shrink-0 items-center gap-2 rounded-full px-3.5 text-sm font-medium transition-colors sm:px-4',
+                'cf-focus-ring group relative flex h-8 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-medium transition-colors lg:text-sm',
                 active
                   ? 'text-primary-foreground'
                   : 'text-muted-foreground hover:text-foreground',
@@ -282,16 +284,7 @@ export function FloatingDockNav() {
       </AnimatePresence>
 
       {/* Divider */}
-      <span className="mx-0.5 hidden h-7 w-px bg-border/60 sm:block" />
-
-      {/* Quick actions on right */}
-      <button
-        onClick={() => useApp.getState().setView('notifications')}
-        className="cf-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-foreground sm:hidden"
-        aria-label="More menu"
-      >
-        <MenuIcon size={16} />
-      </button>
+      <span className="mx-0.5 h-7 w-px bg-border/60" />
 
       {/* Quick upload FAB — navigates to full-page workspace */}
       <button
@@ -299,11 +292,11 @@ export function FloatingDockNav() {
           useApp.getState().setView('upload')
           useApp.getState().setBreadcrumbs([{ label: 'Upload Files', view: 'upload' }])
         }}
-        className="cf-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-glow transition-transform hover:scale-105 active:scale-95"
+        className="cf-focus-ring cf-tap grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-glow transition-transform hover:scale-105 active:scale-95"
         aria-label="Open upload workspace"
         title="Upload workspace (⌘U)"
       >
-        <Plus size={18} strokeWidth={2.4} />
+        <Plus size={16} strokeWidth={2.4} />
       </button>
     </motion.nav>
   )

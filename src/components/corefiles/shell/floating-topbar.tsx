@@ -83,29 +83,30 @@ export function FloatingHeader() {
       initial={{ opacity: 0, y: -16, filter: 'blur(8px)' }}
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ type: 'spring', stiffness: 220, damping: 28 }}
-      // Spec: top:20, left:20, right:20, height:72, radius:24 (rounded-3xl)
-      className="glass-nav fixed left-5 right-5 top-5 z-50 h-[72px] rounded-3xl"
+      // Spec: mobile h 52px (top 16, L/R 16, radius 16px)
+      // Tablet/Desktop h 56px (top 20, L/R 20, max-w 1720, radius 18px)
+      className="glass-nav fixed left-4 right-4 top-4 z-50 mx-auto flex h-[52px] max-w-[1720px] items-center gap-2 rounded-2xl px-3 md:left-5 md:right-5 md:top-5 md:h-[56px] md:rounded-[18px] md:px-6"
       role="banner"
     >
-      <div className="flex h-full items-center gap-2 px-3 sm:px-4">
-        {/* LEFT — Logo + Workspace */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+      {/* LEFT — Logo + Workspace */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Logo */}
           <button
             onClick={() => useApp.getState().setView('dashboard')}
-            className="cf-focus-ring flex items-center gap-2.5 rounded-2xl px-1.5 py-1 transition-colors hover:bg-accent/50"
+            className="cf-focus-ring flex items-center gap-2 rounded-xl px-1 py-0.5 transition-colors hover:bg-accent/50 md:gap-2.5 md:rounded-2xl md:px-1.5 md:py-1"
           >
-            <div className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-glow">
-              <Boxes size={20} strokeWidth={2.4} />
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-700 text-white shadow-glow md:h-10 md:w-10 md:rounded-2xl">
+              <Boxes size={16} strokeWidth={2.4} className="md:hidden" />
+              <Boxes size={20} strokeWidth={2.4} className="hidden md:block" />
             </div>
             <div className="hidden flex-col items-start leading-tight sm:flex">
-              <span className="text-base font-bold brand-text">CoreFiles</span>
+              <span className="text-sm font-bold brand-text md:text-base">CoreFiles</span>
               <span className="text-[10px] text-muted-foreground">Enterprise</span>
             </div>
           </button>
 
           {/* Workspace selector */}
-          <div ref={workspaceRef} className="relative hidden md:block">
+          <div ref={workspaceRef} className="relative hidden lg:block">
             <button
               onClick={() => setWorkspaceOpen(o => !o)}
               className="cf-focus-ring flex items-center gap-2 rounded-2xl border border-border/60 bg-background/40 px-2.5 py-2 transition-colors hover:bg-accent/60"
@@ -153,60 +154,65 @@ export function FloatingHeader() {
           </div>
         </div>
 
-        {/* CENTER — Global search */}
-        <div className="mx-auto flex-1 px-2 sm:max-w-xl">
+        {/* CENTER — Global search (compact icon on mobile, full bar on tablet+) */}
+        <div className="mx-auto flex-1 px-1 sm:max-w-xl sm:px-2">
           <button
             onClick={() => setQuickFind(true)}
-            className="group flex h-11 w-full items-center gap-2.5 rounded-2xl border border-border/60 bg-background/40 px-4 text-sm text-muted-foreground transition-all hover:border-primary/40 hover:bg-background/60 cf-focus-ring"
+            className="group flex h-9 w-full items-center gap-2 rounded-xl border border-border/60 bg-background/40 px-3 text-sm text-muted-foreground transition-all hover:border-primary/40 hover:bg-background/60 cf-focus-ring md:h-11 md:rounded-2xl md:px-4"
+            aria-label="Search (⌘K)"
           >
-            <Search size={16} className="shrink-0" />
-            <span className="hidden flex-1 text-left sm:inline">Search files, folders, people, commands…</span>
-            <span className="flex-1 text-left sm:hidden">Search…</span>
-            <kbd className="hidden items-center gap-0.5 rounded-md border border-border bg-muted/60 px-1.5 py-0.5 text-[10px] font-medium sm:flex">
+            <Search size={15} className="shrink-0 md:hidden" />
+            <Search size={16} className="hidden shrink-0 md:block" />
+            <span className="hidden flex-1 text-left md:inline">Search files, folders, people, commands…</span>
+            <kbd className="ml-auto hidden items-center gap-0.5 rounded-md border border-border bg-muted/60 px-1.5 py-0.5 text-[10px] font-medium md:flex">
               <Command size={9} /> K
             </kbd>
           </button>
         </div>
 
         {/* RIGHT — Actions */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 md:gap-1.5">
           {/* Quick upload — navigates to full-page workspace */}
           <button
             onClick={() => {
               setView('upload')
               useApp.getState().setBreadcrumbs([{ label: 'Upload Files', view: 'upload' }])
             }}
-            className="cf-focus-ring flex h-10 items-center gap-1.5 rounded-2xl bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:shadow-glow active:scale-[0.97] sm:px-4"
+            className="cf-focus-ring cf-tap flex h-8 items-center gap-1.5 rounded-xl bg-primary px-2 text-xs font-medium text-primary-foreground shadow-sm transition-all hover:shadow-glow active:scale-[0.97] md:h-10 md:rounded-2xl md:px-4 md:text-sm"
             title="Open upload workspace (⌘U)"
+            aria-label="Upload"
           >
-            <Upload size={15} />
-            <span className="hidden sm:inline">Upload</span>
+            <Upload size={14} className="md:hidden" />
+            <Upload size={15} className="hidden md:block" />
+            <span className="hidden md:inline">Upload</span>
           </button>
 
           {/* Theme toggle */}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="cf-focus-ring grid h-10 w-10 place-items-center rounded-2xl border border-border/60 bg-background/40 text-muted-foreground transition-colors hover:text-foreground"
+            className="cf-focus-ring cf-tap grid h-8 w-8 place-items-center rounded-xl border border-border/60 bg-background/40 text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10 md:rounded-2xl"
             aria-label="Toggle theme"
           >
             <AnimatePresence mode="wait" initial={false}>
               {theme === 'dark' ? (
                 <motion.span key="sun" initial={{ opacity: 0, rotate: -90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: 90 }} transition={{ duration: 0.15 }}>
-                  <Sun size={16} />
+                  <Sun size={15} className="md:hidden" />
+                  <Sun size={16} className="hidden md:block" />
                 </motion.span>
               ) : (
                 <motion.span key="moon" initial={{ opacity: 0, rotate: 90 }} animate={{ opacity: 1, rotate: 0 }} exit={{ opacity: 0, rotate: -90 }} transition={{ duration: 0.15 }}>
-                  <Moon size={16} />
+                  <Moon size={15} className="md:hidden" />
+                  <Moon size={16} className="hidden md:block" />
                 </motion.span>
               )}
             </AnimatePresence>
           </button>
 
-          {/* Language */}
+          {/* Language (desktop only per spec — hidden on mobile + tablet) */}
           <div ref={langRef} className="relative hidden lg:block">
             <button
               onClick={() => setLangOpen(o => !o)}
-              className="cf-focus-ring grid h-10 w-10 place-items-center rounded-2xl border border-border/60 bg-background/40 text-muted-foreground transition-colors hover:text-foreground"
+              className="cf-focus-ring cf-tap grid h-10 w-10 place-items-center rounded-2xl border border-border/60 bg-background/40 text-muted-foreground transition-colors hover:text-foreground"
               aria-label="Language"
               title="Language"
             >
@@ -241,10 +247,11 @@ export function FloatingHeader() {
           <div ref={notifRef} className="relative">
             <button
               onClick={() => setNotifOpen(o => !o)}
-              className="cf-focus-ring relative grid h-10 w-10 place-items-center rounded-2xl border border-border/60 bg-background/40 text-muted-foreground transition-colors hover:text-foreground"
+              className="cf-focus-ring cf-tap relative grid h-8 w-8 place-items-center rounded-xl border border-border/60 bg-background/40 text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10 md:rounded-2xl"
               aria-label={`Notifications${unread > 0 ? `, ${unread} unread` : ''}`}
             >
-              <Bell size={16} />
+              <Bell size={15} className="md:hidden" />
+              <Bell size={16} className="hidden md:block" />
               <AnimatePresence>
                 {unread > 0 && (
                   <motion.span
@@ -309,10 +316,12 @@ export function FloatingHeader() {
           <div ref={profileRef} className="relative">
             <button
               onClick={() => setProfileOpen(o => !o)}
-              className="cf-focus-ring flex items-center gap-2 rounded-2xl p-1 pr-2 transition-colors hover:bg-accent/60"
+              className="cf-focus-ring cf-tap flex items-center gap-2 rounded-xl p-0.5 transition-colors hover:bg-accent/60 md:rounded-2xl md:p-1 md:pr-2"
               aria-label="Open profile menu"
             >
-              <Avatar name={user?.name || 'User'} size={36} online />
+              <Avatar name={user?.name || 'User'} size={28} online />
+              <span className="sr-only">Profile menu</span>
+              <span className="hidden md:inline" />
             </button>
             <AnimatePresence>
               {profileOpen && (
@@ -362,7 +371,6 @@ export function FloatingHeader() {
             </AnimatePresence>
           </div>
         </div>
-      </div>
     </motion.header>
   )
 }

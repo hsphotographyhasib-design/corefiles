@@ -61,6 +61,10 @@ interface AppState {
   quickFindOpen: boolean
   setQuickFind: (open: boolean) => void
 
+  // Mobile "More" fullscreen sheet
+  moreSheetOpen: boolean
+  setMoreSheetOpen: (open: boolean) => void
+
   // Notifications
   notifications: NotificationItem[]
   markNotificationRead: (id: string) => void
@@ -110,6 +114,9 @@ export const useApp = create<AppState>((set, get) => ({
 
   quickFindOpen: false,
   setQuickFind: (open) => set({ quickFindOpen: open }),
+
+  moreSheetOpen: false,
+  setMoreSheetOpen: (open) => set({ moreSheetOpen: open }),
 
   notifications: initialNotifications,
   markNotificationRead: (id) =>

@@ -8,33 +8,34 @@ import { FloatingBreadcrumbs } from '@/components/corefiles/shell/floating-bread
 /**
  * FloatingContent — the main content area as an independent floating card.
  *
- * Spec:
- *   - Position: below the dock (top: 108 + 64 + 20 = 192px on desktop, but the
- *     dock itself sits at 108px and is 64px tall, so content top = 192px)
- *   - Left/Right: 20px margins
- *   - Bottom: 20px
- *   - Rounded: 24px
- *   - Padding: 32px
- *   - Soft shadow, white/dark background
- *   - Own scroll (page background never moves)
+ * Responsive top offset:
+ *   - Mobile (≤767px): top = 76px (header 52 + top margin 16 + gap 8)
+ *     Bottom = 96px (bottom nav 64 + bottom margin 16 + gap 16)
+ *   - Tablet (768-1023px): top = 84px (header 56 + top margin 20 + gap 8)
+ *     Bottom = 24px (no bottom nav on tablet; desktop dock is hidden)
+ *   - Desktop (≥1024px): top = 152px (header 56 + 8 gap + dock 48 + 20 gap + 20 margin)
+ *     Bottom = 20px
  *
  * Layout:
- *   ┌─ Header (top: 20, h: 72) ────────────────────────┐
- *   │                                                   │
- *   ├─ Dock    (top: 108, h: 64) ───────────────────────┤  ← 16px gap from header
- *   │                                                   │
- *   ┌─ Content (top: 192, left/right/bottom: 20) ───────┐  ← 20px gap from dock
- *   │  Breadcrumbs                                      │
- *   │  [view content]                                   │
- *   └───────────────────────────────────────────────────┘
+ *   Mobile:
+ *   ┌─ Header (top: 16, h: 52) ────────────┐
+ *   ├─ Content (top: 76, L/R: 16) ─────────┤
+ *   ├─ Bottom Nav (bottom: 16, h: 64) ─────┤
+ *
+ *   Desktop:
+ *   ┌─ Header (top: 20, h: 56, max-w: 1720) ─┐
+ *   ├─ Dock    (top: 84, h: 48, max-w: 1500) ┤  ← 8px gap from header
+ *   ├─ Content (top: 152, L/R: 20) ──────────┤  ← 20px gap from dock
  */
 export function FloatingContent({ children }: { children: React.ReactNode }) {
   const { view } = useApp()
 
   return (
     <main
-      // Spec: top: 192px (108 + 64 + 20 gap), left/right: 20, bottom: 20
-      className="fixed left-5 right-5 top-[192px] bottom-5 z-30 overflow-y-auto cf-scroll rounded-3xl"
+      // Mobile (≤767px): top 76 (header 52 + 16 margin + 8 gap), bottom 96 (bottom nav 64 + 16 margin + 16 gap)
+      // Tablet (768-1023px): top 144 (header 56 + 20 margin + 8 gap + dock 48 + 12 gap), bottom 24
+      // Desktop (≥1024px): top 152 (header 56 + 20 margin + 8 gap + dock 48 + 20 gap), bottom 20
+      className="fixed left-4 right-4 top-[76px] bottom-[96px] z-30 overflow-y-auto cf-scroll rounded-3xl md:left-5 md:right-5 md:top-[144px] md:bottom-6 lg:top-[152px] lg:bottom-5"
       role="main"
     >
       <motion.div

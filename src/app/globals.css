@@ -392,3 +392,73 @@ kbd {
     0 16px 36px -16px rgba(0,0,0,0.55);
 }
 
+/* ===================== Responsive Navigation Tokens ===================== */
+
+/* Mobile safe-area support (iPhone notch / Dynamic Island / home indicator) */
+.cf-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.cf-safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.cf-safe-x {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Ripple effect for bottom nav taps */
+@keyframes cf-ripple {
+  0% { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+.cf-ripple {
+  position: absolute;
+  border-radius: 9999px;
+  background: currentColor;
+  pointer-events: none;
+  animation: cf-ripple 0.6s ease-out;
+}
+
+/* Haptic-style scale tap (visual feedback when vibration API unavailable) */
+.cf-tap {
+  transition: transform 0.1s ease;
+}
+.cf-tap:active {
+  transform: scale(0.92);
+}
+
+/* Mobile bottom nav glass — heavier blur for readability over content */
+.glass-mobile-nav {
+  background: color-mix(in oklab, var(--card) 78%, transparent);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  box-shadow:
+    0 -2px 12px rgba(0,0,0,0.08),
+    0 -12px 32px -8px rgba(0,0,0,0.18);
+}
+.dark .glass-mobile-nav {
+  background: color-mix(in oklab, var(--card) 62%, transparent);
+  box-shadow:
+    0 -2px 12px rgba(0,0,0,0.4),
+    0 -12px 32px -8px rgba(0,0,0,0.55);
+}
+
+/* Mobile FAB (center upload button) — elevated green circle */
+.fab-mobile {
+  background: linear-gradient(135deg, oklch(0.62 0.17 150), oklch(0.55 0.15 150));
+  box-shadow:
+    0 4px 16px -2px color-mix(in oklab, var(--primary) 60%, transparent),
+    0 0 0 4px color-mix(in oklab, var(--card) 80%, transparent);
+}
+.fab-mobile:active {
+  transform: scale(0.92);
+}
+
+/* Fullscreen sheet (mobile More menu) */
+.sheet-fullscreen {
+  background: color-mix(in oklab, var(--card) 96%, transparent);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+}
+

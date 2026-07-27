@@ -4,6 +4,8 @@ import * as React from 'react'
 import { useApp } from '@/lib/corefiles/store'
 import { FloatingHeader } from '@/components/corefiles/shell/floating-topbar'
 import { FloatingDockNav } from '@/components/corefiles/shell/floating-dock-nav'
+import { MobileBottomNav } from '@/components/corefiles/shell/mobile-bottom-nav'
+import { MobileMoreSheet } from '@/components/corefiles/shell/mobile-more-sheet'
 import { FloatingContent } from '@/components/corefiles/shell/floating-content'
 import { QuickFind } from '@/components/corefiles/shell/quick-find'
 import { UploadManager } from '@/components/corefiles/shell/upload-manager'
@@ -119,7 +121,12 @@ export function AppShell() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <FloatingHeader />
+      {/* Desktop only (lg+) — horizontal floating dock */}
       <FloatingDockNav />
+      {/* Mobile only (≤767px) — floating bottom nav with center FAB */}
+      <MobileBottomNav />
+      {/* Mobile only — fullscreen sheet for Users/Roles/Reports/etc */}
+      <MobileMoreSheet />
       <FloatingContent>
         <ViewRenderer view={view} />
       </FloatingContent>
