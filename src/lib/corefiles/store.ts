@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+ * CoreFiles Enterprise Document Management System
+ * Developer: amdsaib96
+ * All Rights Reserved.
+ */
+
 'use client'
 
 import { create } from 'zustand'
@@ -28,6 +35,8 @@ export type ViewKey =
   | 'support'
   | 'upload'
   | 'profile'
+  | 'about'
+  | 'system-info'
   | 'not-found'
 
 export interface Workspace {

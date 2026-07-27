@@ -1,9 +1,30 @@
+/**
+ * Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+ * CoreFiles Enterprise Document Management System
+ * Developer: amdsaib96
+ * All Rights Reserved.
+ */
+
 import type { Metadata } from "next";
 import { Poppins, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/corefiles/theme-provider";
+import { BUILD_INFO } from "@/lib/corefiles/build-info";
+
+// Log startup banner once on app boot
+if (typeof window !== 'undefined') {
+  console.log(`
+======================================
+  ${BUILD_INFO.appName} Enterprise
+  Version ${BUILD_INFO.version}
+  Build ${BUILD_INFO.buildId}
+  Developer: ${BUILD_INFO.developer}
+  ${BUILD_INFO.copyright}
+======================================
+`.trim());
+}
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -31,7 +52,9 @@ export const metadata: Metadata = {
     "File Sharing",
     "Enterprise Storage",
   ],
-  authors: [{ name: "Hasanur Jaya Sdn. Bhd." }],
+  authors: [{ name: "amdsaib96", url: "https://corefiles.hasanurjaya.com" }],
+  creator: "amdsaib96",
+  publisher: "Hasanur Jaya Sdn. Bhd.",
   applicationName: "CoreFiles",
   icons: { icon: "/logo.svg" },
   openGraph: {

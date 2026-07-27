@@ -1,0 +1,36 @@
+NOTICE
+======
+
+CoreFiles Enterprise Document Management System
+Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+Developer: amdsaib96
+All Rights Reserved.
+
+This product includes software developed by amdsaib96 for
+Hasanur Jaya Sdn. Bhd. (https://corefiles.hasanurjaya.com).
+
+================================================================================
+
+THIRD-PARTY COMPONENTS
+
+This product incorporates the following open-source components, each
+distributed under their respective licenses:
+
+- Next.js (MIT License) — https://nextjs.org
+- React (MIT License) — https://react.dev
+- TypeScript (Apache License 2.0) — https://typescriptlang.org
+- Tailwind CSS (MIT License) — https://tailwindcss.com
+- shadcn/ui (MIT License) — https://ui.shadcn.com
+- Framer Motion (MIT License) — https://www.framer.com/motion
+- Prisma ORM (Apache License 2.0) — https://www.prisma.io
+- Zustand (MIT License) — https://github.com/pmndrs/zustand
+- Recharts (MIT License) — https://recharts.org
+- Lucide Icons (ISC License) — https://lucide.dev
+- date-fns (MIT License) — https://date-fns.org
+
+All third-party components retain their original copyright notices and
+license terms. The proprietary CoreFiles code is governed by the LICENSE
+file in this repository.
+
+For questions about this NOTICE, contact:
+  legal@hasanurjaya.com

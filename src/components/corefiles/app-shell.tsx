@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+ * CoreFiles Enterprise Document Management System
+ * Developer: amdsaib96
+ * All Rights Reserved.
+ */
+
 'use client'
 
 import * as React from 'react'
@@ -30,6 +37,8 @@ import { SettingsView } from '@/components/corefiles/views/settings'
 import { SupportView } from '@/components/corefiles/views/support'
 import { UploadWorkspaceView } from '@/components/corefiles/views/upload-workspace'
 import { ProfileView } from '@/components/corefiles/profile/profile-view'
+import { AboutView } from '@/components/corefiles/views/about'
+import { SystemInfoView } from '@/components/corefiles/views/system-info'
 import { FavoritesView, RecentView, TrashView, SearchView } from '@/components/corefiles/views/collections'
 import { NotFoundView } from '@/components/corefiles/views/not-found'
 import {
@@ -62,6 +71,8 @@ const views: Record<string, React.ComponentType> = {
   'support': SupportView,
   'upload': UploadWorkspaceView,
   'profile': ProfileView,
+  'about': AboutView,
+  'system-info': SystemInfoView,
 }
 
 /**
@@ -74,7 +85,7 @@ function checkPermission(view: ViewKey, role: RoleKey): 'ok' | 'not-found' | 'de
   if (!item) {
     // Some views (audit-logs, login-logs, search, admin, not-found) are reachable
     // via Quick Find or breadcrumbs but not in the menu config. Allow them.
-    if (['audit-logs', 'login-logs', 'search', 'admin', 'profile', 'not-found'].includes(view)) return 'ok'
+    if (['audit-logs', 'login-logs', 'search', 'admin', 'profile', 'about', 'system-info', 'not-found'].includes(view)) return 'ok'
     return 'not-found'
   }
   if (!item.permission_required) return 'ok'

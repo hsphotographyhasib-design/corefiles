@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+ * CoreFiles Enterprise Document Management System
+ * Developer: amdsaib96
+ * All Rights Reserved.
+ */
+
+/**
  * CoreFiles — Mock Data Layer
  * Simulates the PostgreSQL / Prisma database for the sandbox preview.
  * In production these tables map 1:1 to Prisma models in /prisma/schema.prisma.

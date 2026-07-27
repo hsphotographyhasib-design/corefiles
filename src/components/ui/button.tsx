@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+ * CoreFiles Enterprise Document Management System
+ * Developer: amdsaib96
+ * All Rights Reserved.
+ */
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"

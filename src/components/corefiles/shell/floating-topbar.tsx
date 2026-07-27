@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+ * CoreFiles Enterprise Document Management System
+ * Developer: amdsaib96
+ * All Rights Reserved.
+ */
+
 'use client'
 
 import * as React from 'react'
@@ -346,6 +353,8 @@ export function FloatingHeader() {
                       { label: 'Security & 2FA', icon: Shield, view: 'profile' as const },
                       { label: 'Admin Panel', icon: UserCog, view: 'admin' as const },
                       { label: 'Settings', icon: SettingsIcon, view: 'settings' as const },
+                      { label: 'About CoreFiles', icon: Boxes, view: 'about' as const },
+                      { label: 'System Info', icon: Shield, view: 'system-info' as const },
                     ].map(item => (
                       <button
                         key={item.label}

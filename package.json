@@ -1,12 +1,36 @@
 {
-  "name": "nextjs_tailwind_shadcn_ts",
-  "version": "0.2.1",
+  "name": "corefiles",
+  "version": "1.0.0",
   "private": true,
+  "description": "CoreFiles — Enterprise Document Management System by Hasanur Jaya Sdn. Bhd.",
+  "author": "amdsaib96 <amdsaib96@hasanurjaya.com>",
+  "license": "UNLICENSED",
+  "homepage": "https://corefiles.hasanurjaya.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hsphotographyhasib-design/corefiles.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hsphotographyhasib-design/corefiles/issues"
+  },
+  "keywords": [
+    "corefiles",
+    "edms",
+    "document-management",
+    "enterprise",
+    "hasanur-jaya",
+    "amdsaib96",
+    "minio",
+    "nextjs"
+  ],
+  "company": "Hasanur Jaya Sdn. Bhd.",
+  "developer": "amdsaib96",
   "scripts": {
     "dev": "next dev -p 3000 2>&1 | tee dev.log",
     "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/",
     "start": "NODE_ENV=production bun .next/standalone/server.js 2>&1 | tee server.log",
     "lint": "eslint .",
+    "build:info": "bun run scripts/generate-build-info.ts",
     "db:push": "prisma db push --accept-data-loss",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

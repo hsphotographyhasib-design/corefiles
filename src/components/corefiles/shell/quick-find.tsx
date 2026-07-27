@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+ * CoreFiles Enterprise Document Management System
+ * Developer: amdsaib96
+ * All Rights Reserved.
+ */
+
 'use client'
 
 import * as React from 'react'
@@ -55,6 +62,8 @@ export function QuickFind() {
       { id: 'n-rep', type: 'view', label: 'Reports', sub: 'Analytics & exports', icon: BarChart3, action: () => setView('reports') },
       { id: 'n-set', type: 'view', label: 'Settings', sub: 'System preferences', icon: Settings, action: () => setView('settings') },
       { id: 'n-sup', type: 'view', label: 'Support', sub: 'Help center & contact', icon: LifeBuoy, action: () => setView('support') },
+      { id: 'n-about', type: 'view', label: 'About CoreFiles', sub: 'Version, build, developer, copyright', icon: Boxes, action: () => setView('about') },
+      { id: 'n-sysinfo', type: 'view', label: 'System Information', sub: 'Runtime environment & services', icon: Server, action: () => setView('system-info') },
       { id: 'n-trash', type: 'view', label: 'Recycle Bin', sub: 'Deleted files', icon: Trash2, action: () => setView('trash') },
       { id: 'n-notif', type: 'view', label: 'Notifications', sub: 'Alerts center', icon: Bell, action: () => setView('notifications') },
     ]

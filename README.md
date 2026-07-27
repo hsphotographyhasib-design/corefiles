@@ -2,8 +2,18 @@
 
 > Self-hosted Enterprise Document Management System (EDMS) & secure private cloud storage platform.
 
-**Company:** Hasanur Jaya Sdn. Bhd.
-**Domain:** https://corefiles.hasanurjaya.com
+[![Version](https://img.shields.io/badge/version-1.0.0-10b981)](https://github.com/hsphotographyhasib-design/corefiles)
+[![License](https://img.shields.io/badge/license-Proprietary-red)](./LICENSE)
+[![Developer](https://img.shields.io/badge/developer-amdsaib96-0ea5e9)](https://github.com/hsphotographyhasib-design)
+
+| | |
+|---|---|
+| **Company** | Hasanur Jaya Sdn. Bhd. |
+| **Developer** | amdsaib96 |
+| **Domain** | https://corefiles.hasanurjaya.com |
+| **Version** | 1.0.0 |
+| **License** | Proprietary — All Rights Reserved |
+| **Repository** | https://github.com/hsphotographyhasib-design/corefiles |
 
 CoreFiles is an enterprise-grade, scalable, secure document management platform designed for engineering teams. It provides file storage, version control, role-based access control, approval workflows, audit logging, and server monitoring — all deployable on a single Ubuntu server.
 
@@ -359,4 +369,16 @@ Proprietary — © 2026 Hasanur Jaya Sdn. Bhd. All rights reserved.
 
 ---
 
-**Built with ❤️ for engineering teams who take their documents seriously.**
+## 📄 License & Copyright
+
+Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+CoreFiles Enterprise Document Management System
+Developer: amdsaib96
+All Rights Reserved.
+
+This software is proprietary. See [LICENSE](./LICENSE) for the full license
+terms. For third-party component attributions, see [NOTICE](./NOTICE).
+
+---
+
+**CoreFiles Enterprise** · © 2026 Hasanur Jaya Sdn. Bhd. · Developed by amdsaib96

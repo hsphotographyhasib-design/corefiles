@@ -1,0 +1,156 @@
+# CoreFiles Docker Compose
+# Copyright (c) 2026 Hasanur Jaya Sdn. Bhd.
+# Developer: amdsaib96
+#
+# Usage: docker-compose up -d
+# Config: .env (see .env.example)
+
+version: '3.9'
+
+services:
+  # ============ CoreFiles Application ============
+  corefiles:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: corefiles-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://corefiles:${DB_PASSWORD}@postgres:5432/corefiles
+      - REDIS_URL=redis://redis:6379
+      - MINIO_ENDPOINT=minio
+      - MINIO_PORT=9000
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - CLAMAV_HOST=clamav
+      - CLAMAV_PORT=3310
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    labels:
+      - "org.opencontainers.image.title=CoreFiles"
+      - "org.opencontainers.image.vendor=Hasanur Jaya Sdn. Bhd."
+      - "org.opencontainers.image.version=1.0.0"
+      - "org.opencontainers.image.authors=amdsaib96"
+      - "com.hasanurjaya.app=CoreFiles"
+      - "com.hasanurjaya.developer=amdsaib96"
+    networks:
+      - corefiles-net
+
+  # ============ PostgreSQL ============
+  postgres:
+    image: postgres:16-alpine
+    container_name: corefiles-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: corefiles
+      POSTGRES_USER: corefiles
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U corefiles"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - corefiles-net
+
+  # ============ Redis ============
+  redis:
+    image: redis:7-alpine
+    container_name: corefiles-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    networks:
+      - corefiles-net
+
+  # ============ MinIO (S3 Storage) ============
+  minio:
+    image: minio/minio:latest
+    container_name: corefiles-storage
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - corefiles-net
+
+  # ============ ClamAV (Virus Scanner) ============
+  clamav:
+    image: clamav/clamav:latest
+    container_name: corefiles-antivirus
+    restart: unless-stopped
+    networks:
+      - corefiles-net
+
+  # ============ Nginx Reverse Proxy ============
+  nginx:
+    image: nginx:alpine
+    container_name: corefiles-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - corefiles
+    networks:
+      - corefiles-net
+
+  # ============ Prometheus (Metrics) ============
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: corefiles-metrics
+    restart: unless-stopped
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - corefiles-net
+
+  # ============ Grafana (Dashboards) ============
+  grafana:
+    image: grafana/grafana:latest
+    container_name: corefiles-dashboards
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - corefiles-net
+
+volumes:
+  postgres-data:
+  redis-data:
+  minio-data:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  corefiles-net:
+    driver: bridge
