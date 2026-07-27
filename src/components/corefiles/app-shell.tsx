@@ -29,6 +29,7 @@ import { MonitoringView } from '@/components/corefiles/views/monitoring'
 import { SettingsView } from '@/components/corefiles/views/settings'
 import { SupportView } from '@/components/corefiles/views/support'
 import { UploadWorkspaceView } from '@/components/corefiles/views/upload-workspace'
+import { ProfileView } from '@/components/corefiles/profile/profile-view'
 import { FavoritesView, RecentView, TrashView, SearchView } from '@/components/corefiles/views/collections'
 import { NotFoundView } from '@/components/corefiles/views/not-found'
 import {
@@ -60,6 +61,7 @@ const views: Record<string, React.ComponentType> = {
   'settings': SettingsView,
   'support': SupportView,
   'upload': UploadWorkspaceView,
+  'profile': ProfileView,
 }
 
 /**
@@ -72,7 +74,7 @@ function checkPermission(view: ViewKey, role: RoleKey): 'ok' | 'not-found' | 'de
   if (!item) {
     // Some views (audit-logs, login-logs, search, admin, not-found) are reachable
     // via Quick Find or breadcrumbs but not in the menu config. Allow them.
-    if (['audit-logs', 'login-logs', 'search', 'admin', 'not-found'].includes(view)) return 'ok'
+    if (['audit-logs', 'login-logs', 'search', 'admin', 'profile', 'not-found'].includes(view)) return 'ok'
     return 'not-found'
   }
   if (!item.permission_required) return 'ok'

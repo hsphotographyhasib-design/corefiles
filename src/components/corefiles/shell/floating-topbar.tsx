@@ -319,7 +319,7 @@ export function FloatingHeader() {
               className="cf-focus-ring cf-tap flex items-center gap-2 rounded-xl p-0.5 transition-colors hover:bg-accent/60 md:rounded-2xl md:p-1 md:pr-2"
               aria-label="Open profile menu"
             >
-              <Avatar name={user?.name || 'User'} size={28} online />
+              <Avatar name={user?.displayName || user?.firstName || 'User'} size={28} online avatarUrl={user?.avatarUrl} />
               <span className="sr-only">Profile menu</span>
               <span className="hidden md:inline" />
             </button>
@@ -333,23 +333,23 @@ export function FloatingHeader() {
                   className="glass-nav absolute right-0 top-12 w-64 overflow-hidden rounded-2xl"
                 >
                   <div className="flex items-center gap-3 border-b border-border/60 p-4">
-                    <Avatar name={user?.name || 'User'} size={40} online />
+                    <Avatar name={user?.displayName || user?.firstName || 'User'} size={40} online avatarUrl={user?.avatarUrl} />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold">{user?.name}</p>
+                      <p className="truncate text-sm font-semibold">{user?.displayName || user?.firstName}</p>
                       <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
                       <span className="mt-1 inline-block rounded-md bg-primary/10 px-1.5 py-0.5 text-[9px] font-semibold text-primary">{user?.role}</span>
                     </div>
                   </div>
                   <div className="p-2">
                     {[
-                      { label: 'My Profile', icon: UserIcon, view: 'settings' as const },
-                      { label: 'Security & 2FA', icon: Shield, view: 'settings' as const },
+                      { label: 'My Profile', icon: UserIcon, view: 'profile' as const },
+                      { label: 'Security & 2FA', icon: Shield, view: 'profile' as const },
                       { label: 'Admin Panel', icon: UserCog, view: 'admin' as const },
                       { label: 'Settings', icon: SettingsIcon, view: 'settings' as const },
                     ].map(item => (
                       <button
                         key={item.label}
-                        onClick={() => { setProfileOpen(false); setView(item.view) }}
+                        onClick={() => { setProfileOpen(false); setView(item.view); useApp.getState().setBreadcrumbs([{ label: item.label, view: item.view }]) }}
                         className="cf-focus-ring flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                       >
                         <item.icon size={15} />

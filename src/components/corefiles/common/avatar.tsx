@@ -18,13 +18,31 @@ export function Avatar({
   size = 36,
   className,
   online = false,
+  avatarUrl,
 }: {
   name: string
   size?: number
   className?: string
   online?: boolean
+  avatarUrl?: string
 }) {
   const idx = name.charCodeAt(0) % palette.length
+  // If we have an avatar URL, render the image; otherwise show initials
+  if (avatarUrl) {
+    return (
+      <div className={cn('relative shrink-0', className)} style={{ width: size, height: size }}>
+        <img
+          src={avatarUrl}
+          alt={name}
+          className="h-full w-full rounded-full object-cover ring-2 ring-background"
+          style={{ width: size, height: size }}
+        />
+        {online && (
+          <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-background pulse-dot text-emerald-500" />
+        )}
+      </div>
+    )
+  }
   return (
     <div className={cn('relative shrink-0', className)} style={{ width: size, height: size }}>
       <div

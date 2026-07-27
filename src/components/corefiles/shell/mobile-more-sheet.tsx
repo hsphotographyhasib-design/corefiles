@@ -91,9 +91,9 @@ export function MobileMoreSheet() {
 
             {/* User profile card */}
             <div className="m-4 flex items-center gap-3 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-600/10 p-4">
-              <Avatar name={user?.name || 'User'} size={48} online />
+              <Avatar name={user?.displayName || user?.firstName || 'User'} size={48} online avatarUrl={user?.avatarUrl} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold">{user?.name}</p>
+                <p className="truncate text-sm font-semibold">{user?.displayName || user?.firstName}</p>
                 <p className="truncate text-xs text-muted-foreground">{user?.email}</p>
                 <span className="mt-1 inline-block rounded-md bg-primary/15 px-1.5 py-0.5 text-[9px] font-semibold text-primary">
                   {user?.role}
@@ -149,7 +149,7 @@ export function MobileMoreSheet() {
                 <button
                   onClick={() => handleNavigate({
                     id: 'm-profile', group_id: 'g-system', name: 'My Profile',
-                    icon: UserIcon, url: 'settings' as any, sort_order: 0,
+                    icon: UserIcon, url: 'profile' as any, sort_order: 0,
                     parent_id: null, visible: true, in_dock: false,
                     permission_required: null,
                   } as MenuItem)}
@@ -165,7 +165,7 @@ export function MobileMoreSheet() {
                 <button
                   onClick={() => handleNavigate({
                     id: 'm-security', group_id: 'g-system', name: 'Security & 2FA',
-                    icon: Shield, url: 'settings' as any, sort_order: 0,
+                    icon: Shield, url: 'profile' as any, sort_order: 0,
                     parent_id: null, visible: true, in_dock: false,
                     permission_required: null,
                   } as MenuItem)}

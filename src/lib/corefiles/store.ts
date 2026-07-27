@@ -27,6 +27,7 @@ export type ViewKey =
   | 'settings'
   | 'support'
   | 'upload'
+  | 'profile'
   | 'not-found'
 
 export interface Workspace {
@@ -36,13 +37,66 @@ export interface Workspace {
   initials: string
 }
 
+/** Rich user profile — supports all fields per spec */
+export interface UserProfile {
+  id: string
+  // Identity
+  firstName: string
+  lastName: string
+  displayName: string
+  username: string
+  email: string
+  role: RoleKey
+  avatarUrl?: string  // data URL or remote URL
+  // Professional
+  employeeId: string
+  jobTitle: string
+  department: string
+  company: string
+  bio: string
+  // Personal (optional)
+  dateOfBirth?: string
+  gender?: 'male' | 'female' | 'other' | 'prefer-not-to-say' | ''
+  // Locale
+  timezone: string
+  language: string
+  // Contact
+  phone: string
+  mobile: string
+  whatsapp: string
+  officeExtension: string
+  address: string
+  city: string
+  state: string
+  country: string
+  postalCode: string
+  // Security
+  twoFactorEnabled: boolean
+  recoveryEmail: string
+  // Preferences
+  theme: 'light' | 'dark' | 'system'
+  dateFormat: 'YYYY-MM-DD' | 'DD/MM/YYYY' | 'MM/DD/YYYY'
+  timeFormat: '12h' | '24h'
+  defaultLandingPage: ViewKey
+  profileVisibility: 'public' | 'organization' | 'department' | 'private'
+  // Notification settings
+  notifEmail: boolean
+  notifPush: boolean
+  notifSecurityAlerts: boolean
+  notifUploads: boolean
+  notifMentions: boolean
+  notifSystemUpdates: boolean
+}
+
 interface AppState {
   // Auth
   isAuthed: boolean
-  user: { id: string; name: string; email: string; role: RoleKey } | null
+  user: UserProfile | null
   login: (role?: RoleKey) => void
   logout: () => void
   setRole: (role: RoleKey) => void
+  updateUserProfile: (patch: Partial<UserProfile>) => void
+  setUserAvatar: (avatarUrl: string | undefined) => void
 
   // Workspace selector
   workspaces: Workspace[]
@@ -95,12 +149,55 @@ export const useApp = create<AppState>((set, get) => ({
   login: (role: RoleKey = 'Super Admin') =>
     set({
       isAuthed: true,
-      user: { id: 'u-1', name: 'Hasan Rahman', email: 'hasan@hasanurjaya.com', role },
+      user: {
+        id: 'u-1',
+        firstName: 'Hasan',
+        lastName: 'Rahman',
+        displayName: 'Hasan Rahman',
+        username: 'hasan.rahman',
+        email: 'hasan@hasanurjaya.com',
+        role,
+        employeeId: 'HJ-001',
+        jobTitle: 'Chief Executive Officer',
+        department: 'Administration',
+        company: 'Hasanur Jaya Sdn. Bhd.',
+        bio: 'Founder & CEO of Hasanur Jaya Sdn. Bhd. — building Malaysia\'s most reliable engineering document management platform.',
+        timezone: 'Asia/Kuala_Lumpur',
+        language: 'en',
+        phone: '+60 3-8941 2000',
+        mobile: '+60 12-345 6789',
+        whatsapp: '+60 12-345 6789',
+        officeExtension: '1001',
+        address: 'Level 12, Menara CIMB, Jalan Stesen Sentral 5',
+        city: 'Kuala Lumpur',
+        state: 'Wilayah Persekutuan',
+        country: 'Malaysia',
+        postalCode: '50470',
+        twoFactorEnabled: true,
+        recoveryEmail: 'hasan.backup@gmail.com',
+        theme: 'system',
+        dateFormat: 'DD/MM/YYYY',
+        timeFormat: '24h',
+        defaultLandingPage: 'dashboard',
+        profileVisibility: 'organization',
+        notifEmail: true,
+        notifPush: true,
+        notifSecurityAlerts: true,
+        notifUploads: true,
+        notifMentions: true,
+        notifSystemUpdates: false,
+      },
       view: 'dashboard',
       breadcrumbs: [{ label: 'Dashboard', view: 'dashboard' }],
     }),
   logout: () => set({ isAuthed: false, user: null, view: 'dashboard' }),
   setRole: (role) => set((s) => ({ user: s.user ? { ...s.user, role } : s.user })),
+  updateUserProfile: (patch) => set((s) => ({
+    user: s.user ? { ...s.user, ...patch } : s.user,
+  })),
+  setUserAvatar: (avatarUrl) => set((s) => ({
+    user: s.user ? { ...s.user, avatarUrl } : s.user,
+  })),
 
   workspaces: defaultWorkspaces,
   currentWorkspaceId: 'ws-core',
