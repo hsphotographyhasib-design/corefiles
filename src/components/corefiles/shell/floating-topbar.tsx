@@ -8,7 +8,6 @@ import {
   CheckCheck, Globe, Command, Boxes,
 } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
-import { useUploadEngine } from '@/lib/corefiles/upload-engine'
 import { Avatar } from '@/components/corefiles/common/avatar'
 import { useTheme } from 'next-themes'
 import { toast } from '@/components/corefiles/common/toast-bridge'
@@ -35,7 +34,6 @@ export function FloatingHeader() {
     setQuickFind, notifications, markAllRead, markNotificationRead,
     setView,
   } = useApp()
-  const setModalOpen = useUploadEngine(s => s.setModalOpen)
   const { theme, setTheme } = useTheme()
   const [notifOpen, setNotifOpen] = React.useState(false)
   const [profileOpen, setProfileOpen] = React.useState(false)
@@ -50,7 +48,7 @@ export function FloatingHeader() {
   const unread = notifications.filter(n => !n.read).length
   const currentWs = workspaces.find(w => w.id === currentWorkspaceId)!
 
-  // ⌘K + ⌘U keyboard shortcuts
+  // ⌘K (search) + ⌘U (upload workspace) keyboard shortcuts
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
@@ -59,12 +57,13 @@ export function FloatingHeader() {
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'u') {
         e.preventDefault()
-        setModalOpen(true)
+        setView('upload')
+        useApp.getState().setBreadcrumbs([{ label: 'Upload Files', view: 'upload' }])
       }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [setQuickFind, setModalOpen])
+  }, [setQuickFind, setView])
 
   // Close popovers on outside click
   React.useEffect(() => {
@@ -171,11 +170,14 @@ export function FloatingHeader() {
 
         {/* RIGHT — Actions */}
         <div className="flex items-center gap-1.5">
-          {/* Quick upload */}
+          {/* Quick upload — navigates to full-page workspace */}
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={() => {
+              setView('upload')
+              useApp.getState().setBreadcrumbs([{ label: 'Upload Files', view: 'upload' }])
+            }}
             className="cf-focus-ring flex h-10 items-center gap-1.5 rounded-2xl bg-primary px-3 text-sm font-medium text-primary-foreground shadow-sm transition-all hover:shadow-glow active:scale-[0.97] sm:px-4"
-            title="Quick upload (⌘U)"
+            title="Open upload workspace (⌘U)"
           >
             <Upload size={15} />
             <span className="hidden sm:inline">Upload</span>

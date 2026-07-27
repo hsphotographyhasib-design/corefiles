@@ -6,7 +6,6 @@ import {
   ChevronLeft, ChevronRight, Plus, Menu as MenuIcon,
 } from 'lucide-react'
 import { useApp } from '@/lib/corefiles/store'
-import { useUploadEngine } from '@/lib/corefiles/upload-engine'
 import { getDockMenuForRole, type MenuItem, type RoleKey } from '@/components/corefiles/data/menu'
 import { cn } from '@/lib/utils'
 
@@ -294,12 +293,15 @@ export function FloatingDockNav() {
         <MenuIcon size={16} />
       </button>
 
-      {/* Quick upload FAB-style button */}
+      {/* Quick upload FAB — navigates to full-page workspace */}
       <button
-        onClick={() => useUploadEngine.getState().setModalOpen(true)}
+        onClick={() => {
+          useApp.getState().setView('upload')
+          useApp.getState().setBreadcrumbs([{ label: 'Upload Files', view: 'upload' }])
+        }}
         className="cf-focus-ring grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-glow transition-transform hover:scale-105 active:scale-95"
-        aria-label="Quick upload"
-        title="Quick upload (⌘U)"
+        aria-label="Open upload workspace"
+        title="Upload workspace (⌘U)"
       >
         <Plus size={18} strokeWidth={2.4} />
       </button>

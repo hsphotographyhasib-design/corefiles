@@ -16,6 +16,7 @@ import {
   LayoutDashboard, FolderTree, FolderOpen, Clock, Star, Share2,
   Download, Trash2, Users, Shield, Building2, BarChart3, Server,
   Settings, Database, LifeBuoy, Bell, ScrollText, HardDrive, Mail,
+  Upload,
   type LucideIcon,
 } from 'lucide-react'
 import type { ViewKey } from '@/lib/corefiles/store'
@@ -68,15 +69,16 @@ export const menuGroups: MenuGroup[] = [
 // 15 items per spec — every one has a distinct route + view.
 
 export const menuItems: MenuItem[] = [
-  // Workspace (8 items)
+  // Workspace (9 items — upload is a full-page workspace, not in the dock)
   { id: 'm-dashboard', group_id: 'g-workspace', name: 'Dashboard', icon: LayoutDashboard, url: 'dashboard', sort_order: 1, parent_id: null, visible: true, in_dock: true, permission_required: null, shortcut: '1' },
-  { id: 'm-files', group_id: 'g-workspace', name: 'Files', icon: FolderTree, url: 'files', sort_order: 2, parent_id: null, visible: true, in_dock: true, permission_required: 'view', shortcut: '2' },
-  { id: 'm-folders', group_id: 'g-workspace', name: 'Folders', icon: FolderOpen, url: 'folders', sort_order: 3, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
-  { id: 'm-favorites', group_id: 'g-workspace', name: 'Favorites', icon: Star, url: 'favorites', sort_order: 4, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
-  { id: 'm-recent', group_id: 'g-workspace', name: 'Recent', icon: Clock, url: 'recent', sort_order: 5, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
-  { id: 'm-shared', group_id: 'g-workspace', name: 'Shared', icon: Share2, url: 'shared', sort_order: 6, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
-  { id: 'm-downloads', group_id: 'g-workspace', name: 'Downloads', icon: Download, url: 'downloads', sort_order: 7, parent_id: null, visible: true, in_dock: true, permission_required: 'download' },
-  { id: 'm-trash', group_id: 'g-workspace', name: 'Trash', icon: Trash2, url: 'trash', sort_order: 8, parent_id: null, visible: true, in_dock: true, permission_required: 'restore' },
+  { id: 'm-upload', group_id: 'g-workspace', name: 'Upload Files', icon: Upload, url: 'upload', sort_order: 2, parent_id: null, visible: true, in_dock: false, permission_required: 'upload', shortcut: 'U' },
+  { id: 'm-files', group_id: 'g-workspace', name: 'Files', icon: FolderTree, url: 'files', sort_order: 3, parent_id: null, visible: true, in_dock: true, permission_required: 'view', shortcut: '2' },
+  { id: 'm-folders', group_id: 'g-workspace', name: 'Folders', icon: FolderOpen, url: 'folders', sort_order: 4, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
+  { id: 'm-favorites', group_id: 'g-workspace', name: 'Favorites', icon: Star, url: 'favorites', sort_order: 5, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
+  { id: 'm-recent', group_id: 'g-workspace', name: 'Recent', icon: Clock, url: 'recent', sort_order: 6, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
+  { id: 'm-shared', group_id: 'g-workspace', name: 'Shared', icon: Share2, url: 'shared', sort_order: 7, parent_id: null, visible: true, in_dock: true, permission_required: 'view' },
+  { id: 'm-downloads', group_id: 'g-workspace', name: 'Downloads', icon: Download, url: 'downloads', sort_order: 8, parent_id: null, visible: true, in_dock: true, permission_required: 'download' },
+  { id: 'm-trash', group_id: 'g-workspace', name: 'Trash', icon: Trash2, url: 'trash', sort_order: 9, parent_id: null, visible: true, in_dock: true, permission_required: 'restore' },
 
   // Management (6 items, 4 in dock — Activity Logs + Storage stay in Quick Find)
   { id: 'm-users', group_id: 'g-management', name: 'Users', icon: Users, url: 'users', sort_order: 1, parent_id: null, visible: true, in_dock: true, permission_required: 'manage_users' },

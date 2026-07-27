@@ -26,6 +26,7 @@ export type ViewKey =
   | 'monitoring'
   | 'settings'
   | 'support'
+  | 'upload'
   | 'not-found'
 
 export interface Workspace {

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search, FolderTree, FolderOpen, Users, Settings, Shield, BarChart3, Server,
   FileText, Building2, Bell, Star, Clock, Trash2, Boxes, CornerDownLeft,
-  Share2, Download, LifeBuoy,
+  Share2, Download, LifeBuoy, Upload,
 } from 'lucide-react'
 import { useApp, type ViewKey } from '@/lib/corefiles/store'
 import { files, users, folders } from '@/components/corefiles/data/mock'
@@ -38,6 +38,7 @@ export function QuickFind() {
   const results = React.useMemo<Result[]>(() => {
     const navResults: Result[] = [
       { id: 'n-dash', type: 'view', label: 'Dashboard', sub: 'Overview & system health', icon: Boxes, action: () => setView('dashboard') },
+      { id: 'n-upload', type: 'view', label: 'Upload Files', sub: 'Full-page upload workspace', icon: Upload, action: () => setView('upload') },
       { id: 'n-files', type: 'view', label: 'File Manager', sub: 'Browse all files', icon: FolderTree, action: () => setView('files') },
       { id: 'n-folders', type: 'view', label: 'Folders', sub: 'Folder tree explorer', icon: FolderOpen, action: () => setView('folders') },
       { id: 'n-fav', type: 'view', label: 'Favorites', sub: 'Starred files', icon: Star, action: () => setView('favorites') },

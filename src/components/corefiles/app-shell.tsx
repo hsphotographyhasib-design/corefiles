@@ -6,7 +6,6 @@ import { FloatingHeader } from '@/components/corefiles/shell/floating-topbar'
 import { FloatingDockNav } from '@/components/corefiles/shell/floating-dock-nav'
 import { FloatingContent } from '@/components/corefiles/shell/floating-content'
 import { QuickFind } from '@/components/corefiles/shell/quick-find'
-import { UploadModal } from '@/components/corefiles/shell/upload-modal'
 import { UploadManager } from '@/components/corefiles/shell/upload-manager'
 import { ToastBridge } from '@/components/corefiles/common/toast-bridge'
 import { ErrorBoundary } from '@/components/corefiles/common/error-boundary'
@@ -27,6 +26,7 @@ import { AdminView } from '@/components/corefiles/views/admin'
 import { MonitoringView } from '@/components/corefiles/views/monitoring'
 import { SettingsView } from '@/components/corefiles/views/settings'
 import { SupportView } from '@/components/corefiles/views/support'
+import { UploadWorkspaceView } from '@/components/corefiles/views/upload-workspace'
 import { FavoritesView, RecentView, TrashView, SearchView } from '@/components/corefiles/views/collections'
 import { NotFoundView } from '@/components/corefiles/views/not-found'
 import {
@@ -57,6 +57,7 @@ const views: Record<string, React.ComponentType> = {
   'monitoring': MonitoringView,
   'settings': SettingsView,
   'support': SupportView,
+  'upload': UploadWorkspaceView,
 }
 
 /**
@@ -124,7 +125,6 @@ export function AppShell() {
       </FloatingContent>
 
       <QuickFind />
-      <UploadModal />
       <UploadManager />
       <ToastBridge />
       <RoleSwitcher />
