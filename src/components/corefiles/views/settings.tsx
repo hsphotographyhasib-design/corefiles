@@ -71,7 +71,7 @@ export function SettingsView() {
             <div className="space-y-5">
               <h3 className="text-base font-semibold">Profile</h3>
               <div className="flex items-center gap-4">
-                <Avatar name={user?.name || 'User'} size={80} />
+                <Avatar name={user?.displayName || user?.firstName || 'User'} size={80} avatarUrl={user?.avatarUrl} />
                 <div>
                   <button onClick={() => toast('Upload avatar dialog')} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:shadow-glow"><Upload size={12} className="inline mr-1" /> Upload new</button>
                   <p className="mt-1 text-[10px] text-muted-foreground">JPG, PNG or GIF · max 2MB</p>
@@ -79,7 +79,7 @@ export function SettingsView() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 {[
-                  { label: 'Full name', value: user?.name },
+                  { label: 'Full name', value: user ? `${user.firstName} ${user.lastName}` : '' },
                   { label: 'Email', value: user?.email, type: 'email' },
                   { label: 'Phone', value: '+60 12-345 6789' },
                   { label: 'Job title', value: 'Chief Executive Officer' },

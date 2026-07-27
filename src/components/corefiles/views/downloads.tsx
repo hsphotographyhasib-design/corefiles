@@ -140,8 +140,8 @@ export function DownloadsView() {
                   <p className="truncate text-[10px] text-muted-foreground">{file.path.join(' / ')}</p>
                 </button>
                 <div className="hidden items-center gap-1.5 md:flex">
-                  <Avatar name={user?.name || '?'} size={20} />
-                  <span className="text-xs">{user?.name}</span>
+                  <Avatar name={user?.displayName || user?.firstName || '?'} size={20} avatarUrl={user?.avatarUrl} />
+                  <span className="text-xs">{user?.displayName || user?.firstName}</span>
                 </div>
                 <div className="hidden items-center gap-1 text-[10px] text-muted-foreground lg:flex">
                   <DeviceIcon size={12} /> {d.device}

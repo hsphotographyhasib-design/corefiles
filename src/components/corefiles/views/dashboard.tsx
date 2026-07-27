@@ -176,7 +176,7 @@ export function DashboardView() {
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
             <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-              Welcome back, <span className="brand-text">{user?.name.split(' ')[0]}</span> 👋
+              Welcome back, <span className="brand-text">{user?.firstName || 'User'}</span> 👋
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               System is healthy · all 10 services online · 1 alert needs your attention
